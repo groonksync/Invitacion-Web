@@ -1,0 +1,57 @@
+[
+  {
+    "id": "rsvp-001",
+    "slug": "valeria-15",
+    "fullName": "Alejandro Mendoza & Familia",
+    "attending": true,
+    "guestsCount": 4,
+    "phone": "+52 55 1234 5678",
+    "dietaryRestrictions": "1 menú vegetariano",
+    "message": "¡Muchas felicidades sobrina querida! Nos llena de orgullo verte cumplir 15 años. ¡Allí estaremos con toda la alegría!",
+    "createdAt": "2026-08-15T14:20:00.000Z"
+  },
+  {
+    "id": "rsvp-002",
+    "slug": "valeria-15",
+    "fullName": "María Fernanda Gómez",
+    "attending": true,
+    "guestsCount": 2,
+    "phone": "+52 55 9876 5432",
+    "dietaryRestrictions": "Sin mariscos",
+    "message": "¡Amigaaaa no puedo esperar para verte brillar con tu vestido hermoso! Te quiero mucho.",
+    "createdAt": "2026-08-16T18:45:00.000Z"
+  },
+  {
+    "id": "rsvp-003",
+    "slug": "valeria-15",
+    "fullName": "Carlos Alberto Silva",
+    "attending": true,
+    "guestsCount": 1,
+    "phone": "+52 55 4567 8901",
+    "dietaryRestrictions": "",
+    "message": "Felicidades Vale, te deseo lo mejor en tus quince.",
+    "createdAt": "2026-08-17T10:15:00.000Z"
+  },
+  {
+    "id": "rsvp-004",
+    "slug": "valeria-15",
+    "fullName": "Lucía Morales & Esposo",
+    "attending": false,
+    "guestsCount": 0,
+    "phone": "+52 55 3344 5566",
+    "dietaryRestrictions": "",
+    "message": "Querida Valeria, lamentablemente estaremos fuera de la ciudad por trabajo en esa fecha, pero les mandamos un abrazo inmenso y todo nuestro cariño.",
+    "createdAt": "2026-08-18T16:30:00.000Z"
+  },
+  {
+    "id": "rsvp-005",
+    "slug": "valeria-15",
+    "fullName": "Esteban Ramos & Pareja",
+    "attending": true,
+    "guestsCount": 2,
+    "phone": "+52 55 7788 9900",
+    "dietaryRestrictions": "Ninguna",
+    "message": "¡Felicidades a la quinceañera y a sus orgullosos padres!",
+    "createdAt": "2026-08-19T11:00:00.000Z"
+  }
+]
