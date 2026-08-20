@@ -1,19 +1,49 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getAllEvents } from '@/data/events';
-import { Sparkles, Eye, ShieldCheck, Heart, ArrowRight, Music, Download, Smartphone, Laptop } from 'lucide-react';
+import {
+  Sparkles,
+  Eye,
+  ShieldCheck,
+  Copy,
+  Check,
+  Share2,
+  ExternalLink,
+  Lock,
+  Link as LinkIcon,
+  Smartphone,
+  Send
+} from 'lucide-react';
 
 export default function HomePage() {
   const events = getAllEvents();
+  const [origin, setOrigin] = useState('');
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOrigin(window.location.origin);
+    }
+  }, []);
+
+  const copyToClipboard = (text: string, key: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => {
+      setCopiedKey(null);
+    }, 2500);
+  };
 
   return (
-    <main className="min-h-screen bg-[#0d0a0f] text-gray-100 selection:bg-rose-500 selection:text-white sparkle-bg py-16 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#0d0a0f] text-gray-100 selection:bg-rose-500 selection:text-white sparkle-bg py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-16">
         {/* Cabecera Principal */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-950/80 border border-rose-400/30 text-rose-300 text-xs tracking-widest uppercase shadow-lg">
             <Sparkles className="w-4 h-4 text-amber-300 animate-spin" style={{ animationDuration: '6s' }} />
-            <span>Plataforma de Invitaciones Web Interactivas</span>
+            <span>Panel Central de Gestión de Invitaciones</span>
           </div>
 
           <h1 className="font-serif text-4xl sm:text-6xl text-white font-medium">
@@ -24,14 +54,16 @@ export default function HomePage() {
           </h1>
 
           <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-            Experiencias digitales inolvidables con música de fondo, galería de fotos en alta resolución, cronograma interactivo, mapas GPS y control de asistencia RSVP en tiempo real para los padres.
+            Administra tus invitaciones interactivas, copia los enlaces directos para los invitados y entrega a cada familia su panel privado de control de asistencia con PIN.
           </p>
         </div>
 
-        {/* Sección de Tarjetas con las Invitaciones Creadas */}
+        {/* Sección de Tarjetas con las Invitaciones y Enlaces de Copiado */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {events.map((event) => {
             const isDemo = event.slug === 'valeria-15';
+            const invitationUrl = origin ? `${origin}/${event.slug}` : `/${event.slug}`;
+            const adminUrl = origin ? `${origin}/${event.slug}/admin` : `/${event.slug}/admin`;
 
             return (
               <div
@@ -41,7 +73,7 @@ export default function HomePage() {
                 }`}
               >
                 {/* Portada Miniatura */}
-                <div className="relative h-64 w-full overflow-hidden bg-black">
+                <div className="relative h-60 w-full overflow-hidden bg-black">
                   <img
                     src={event.heroImage}
                     alt={event.name}
@@ -72,36 +104,88 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Contenido y Botones */}
+                {/* Contenido y Cajas de URLs para copiar */}
                 <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-6">
-                  <div className="space-y-3 text-sm text-gray-300">
-                    <p className="line-clamp-2 italic font-serif">
-                      &ldquo;{event.phrase}&rdquo;
-                    </p>
+                  {/* Cajas de URLs directas */}
+                  <div className="space-y-4">
+                    {/* URL 1: Para los Invitados */}
+                    <div className="bg-black/50 border border-rose-400/25 rounded-2xl p-4 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-rose-300 flex items-center gap-1.5 uppercase tracking-wider">
+                          <LinkIcon className="w-3.5 h-3.5 text-rose-400" />
+                          <span>Enlace para los Invitados</span>
+                        </span>
+                        <button
+                          onClick={() => copyToClipboard(invitationUrl, `inv-${event.slug}`)}
+                          className="flex items-center gap-1 px-3 py-1 rounded-lg bg-rose-950/80 hover:bg-rose-900 border border-rose-400/30 text-rose-200 text-xs font-medium transition-colors"
+                        >
+                          {copiedKey === `inv-${event.slug}` ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-green-400" />
+                              <span className="text-green-400">¡Copiado!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>Copiar URL</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <div className="p-2 rounded-lg bg-black/70 font-mono text-xs text-gray-300 truncate select-all border border-white/5">
+                        {invitationUrl}
+                      </div>
+                    </div>
 
-                    <div className="flex flex-wrap gap-2 pt-2 text-xs">
-                      <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-rose-200">
-                        🎵 Música integrada
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-amber-200">
-                        📸 {event.gallery.length} Fotos en galería
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-emerald-200">
-                        📝 Confirmación RSVP
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-indigo-200">
-                        📊 Panel con PIN ({event.adminPin})
-                      </span>
+                    {/* URL 2: Para la Madre / Anfitriones */}
+                    <div className="bg-black/50 border border-amber-400/25 rounded-2xl p-4 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-amber-300 flex items-center gap-1.5 uppercase tracking-wider">
+                          <Lock className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Panel Privado para la Mamá</span>
+                        </span>
+                        <button
+                          onClick={() =>
+                            copyToClipboard(
+                              `Hola! Aquí tienes el enlace de tu panel de control de asistencia para los 15 años de ${event.name}:\nEnlace: ${adminUrl}\nPIN de Acceso: ${event.adminPin}`,
+                              `admin-${event.slug}`
+                            )
+                          }
+                          className="flex items-center gap-1 px-3 py-1 rounded-lg bg-amber-950/80 hover:bg-amber-900 border border-amber-400/30 text-amber-200 text-xs font-medium transition-colors"
+                        >
+                          {copiedKey === `admin-${event.slug}` ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-green-400" />
+                              <span className="text-green-400">¡Copiado con PIN!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>Copiar URL + PIN</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <div className="p-2 rounded-lg bg-black/70 font-mono text-xs text-gray-300 truncate select-all border border-white/5">
+                        {adminUrl}
+                      </div>
+                      <div className="flex items-center justify-between pt-1 text-[11px] text-gray-400">
+                        <span>PIN de Acceso Exclusivo:</span>
+                        <span className="font-mono font-bold text-amber-300 bg-amber-950/50 px-2 py-0.5 rounded border border-amber-400/20">
+                          {event.adminPin}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-white/10">
+                  {/* Botones de Acción (Ver en directo) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-white/10">
                     <Link
                       href={`/${event.slug}`}
                       className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:opacity-95 text-white text-sm font-medium text-center shadow-lg transition-all"
                     >
                       <Eye className="w-4 h-4" />
-                      <span>Ver Invitación Web</span>
+                      <span>Abrir Invitación Web</span>
                     </Link>
 
                     <Link
@@ -109,7 +193,7 @@ export default function HomePage() {
                       className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-black/60 hover:bg-rose-950/80 border border-rose-400/30 text-rose-200 hover:text-white text-sm font-medium text-center transition-all"
                     >
                       <ShieldCheck className="w-4 h-4 text-amber-400" />
-                      <span>Panel de Asistencia</span>
+                      <span>Abrir Panel de Asistencia</span>
                     </Link>
                   </div>
                 </div>
@@ -118,49 +202,45 @@ export default function HomePage() {
           })}
         </div>
 
-        {/* Sección Informativa: Cómo llevarlo a lo grande con más clientes */}
+        {/* Sección Informativa: Explicación de los Enlaces */}
         <div className="glass-card-gold rounded-3xl p-8 sm:p-12 space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-xs uppercase tracking-widest text-amber-300 font-sans block">
-              Escalabilidad & Nuevos Clientes
+              Guía Rápida para Compartir
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl text-white font-medium">
-              ¿Cómo agregar invitaciones para más clientes?
+              ¿Qué enlace le entregas a cada persona?
             </h2>
             <p className="text-sm text-gray-300">
-              La plataforma está estructurada de forma modular para que puedas crear tantas invitaciones como desees sin rehacer el código.
+              Cada cliente y cada grupo de personas tiene su enlace correspondiente para mantener la total privacidad.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-            <div className="p-5 rounded-2xl bg-black/50 border border-rose-400/20 space-y-2">
-              <div className="w-8 h-8 rounded-full bg-rose-600/30 text-rose-300 flex items-center justify-center font-bold">
-                1
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+            <div className="p-6 rounded-2xl bg-black/50 border border-rose-400/30 space-y-3">
+              <div className="flex items-center gap-2 text-rose-300 font-medium">
+                <Smartphone className="w-5 h-5" />
+                <h3 className="font-serif text-lg text-white">1. Enlace para los Invitados</h3>
               </div>
-              <h3 className="font-serif text-base text-white font-medium">Enlace Único por Cliente</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">
-                Cada cliente tiene su propia URL (ej: <code className="text-amber-300 font-mono">/camila-15</code>) aislada, con sus fotos, música y horarios.
+              <p className="text-gray-300 text-xs leading-relaxed">
+                Este es el enlace que la quinceañera y sus padres comparten a sus familiares y amigos por WhatsApp o redes sociales. Los invitados verán la música, la galería de fotos, el mapa y el formulario para confirmar su asistencia.
               </p>
+              <div className="p-2.5 rounded-xl bg-rose-950/40 border border-rose-400/20 text-rose-200 text-xs font-mono">
+                👉 tudominio.vercel.app/valeria-15
+              </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-black/50 border border-rose-400/20 space-y-2">
-              <div className="w-8 h-8 rounded-full bg-amber-600/30 text-amber-300 flex items-center justify-center font-bold">
-                2
+            <div className="p-6 rounded-2xl bg-black/50 border border-amber-400/30 space-y-3">
+              <div className="flex items-center gap-2 text-amber-300 font-medium">
+                <Lock className="w-5 h-5" />
+                <h3 className="font-serif text-lg text-white">2. Enlace Privado para los Padres</h3>
               </div>
-              <h3 className="font-serif text-base text-white font-medium">Panel Privado para los Padres</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">
-                Cada madre o anfitriona tiene acceso exclusivo en <code className="text-amber-300 font-mono">/camila-15/admin</code> con su PIN para ver la lista y descargar el Excel.
+              <p className="text-gray-300 text-xs leading-relaxed">
+                Este enlace es exclusivo para la mamá o los padres. Al ingresar con su PIN, pueden ver la lista de cuántas personas confirmaron en vivo, sus dedicatorias y presionar el botón de **Descargar en Excel**.
               </p>
-            </div>
-
-            <div className="p-5 rounded-2xl bg-black/50 border border-rose-400/20 space-y-2">
-              <div className="w-8 h-8 rounded-full bg-emerald-600/30 text-emerald-300 flex items-center justify-center font-bold">
-                3
+              <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-400/20 text-amber-200 text-xs font-mono">
+                👉 tudominio.vercel.app/valeria-15/admin (PIN: 1515)
               </div>
-              <h3 className="font-serif text-base text-white font-medium">Despliegue Global en Vercel</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">
-                Sincronizado con tu cuenta de GitHub y alojado en Vercel con HTTPS gratuito y carga ultra rápida en smartphones.
-              </p>
             </div>
           </div>
         </div>
