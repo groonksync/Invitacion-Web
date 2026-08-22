@@ -4,7 +4,6 @@ import HeroSection from '@/components/HeroSection';
 import CountdownTimer from '@/components/CountdownTimer';
 import DedicationSection from '@/components/DedicationSection';
 import LocationsSection from '@/components/LocationsSection';
-import PhotoGallery from '@/components/PhotoGallery';
 import ItinerarySection from '@/components/ItinerarySection';
 import DressCodeSection from '@/components/DressCodeSection';
 import GiftSection from '@/components/GiftSection';
@@ -46,11 +45,11 @@ export default function InvitationPage({ params }: PageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-[#0d0a0f] text-gray-100 selection:bg-rose-500 selection:text-white sparkle-bg">
-      {/* Reproductor de música de fondo flotante */}
+    <main className="min-h-screen bg-[#131313] text-gray-100 selection:bg-rosegold selection:text-[#131313]">
+      {/* Reproductor de música de fondo flotante con autoplay */}
       <MusicPlayer musicUrl={event.musicUrl} musicTitle={event.musicTitle} />
 
-      {/* Portada Hero */}
+      {/* PORTADA: Fotografía de Inicio a Pantalla Completa */}
       <HeroSection
         name={event.name}
         subtitle={event.subtitle}
@@ -58,44 +57,44 @@ export default function InvitationPage({ params }: PageProps) {
         heroImage={event.heroImage}
       />
 
-      {/* Contador regresivo en tiempo real */}
-      <CountdownTimer targetDate={event.date} />
-
-      {/* Dedicatoria y bendición de padres */}
-      <DedicationSection
+      {/* SECCIÓN 1: Fotografía 1 (dsc09665.jpg) a Pantalla Completa con Cuenta Regresiva & Frase */}
+      <CountdownTimer
+        targetDate={event.date}
         phrase={event.phrase}
         phraseAuthor={event.phraseAuthor}
-        parents={event.parents}
+        backgroundImage={event.gallery[0]?.url || '/fotos/gabriela-torres/dsc09665.jpg'}
       />
 
-      {/* Ubicaciones de misa y salón */}
+      {/* SECCIÓN 2: Fotografía 2 (dsc09668.jpg) a Pantalla Completa con Bendición de Padres */}
+      <DedicationSection
+        parents={event.parents}
+        backgroundImage={event.gallery[1]?.url || '/fotos/gabriela-torres/dsc09668.jpg'}
+      />
+
+      {/* SECCIÓN 3: Fotografía 3 (dsc09709.jpg) a Pantalla Completa con Ceremonia & Recepción */}
       <LocationsSection
         ceremony={event.ceremony}
         party={event.party}
+        backgroundImage={event.gallery[2]?.url || '/fotos/gabriela-torres/dsc09709.jpg'}
       />
 
-      {/* Galería de fotos interactiva con visor */}
-      <PhotoGallery
-        gallery={event.gallery}
-        name={event.name}
-      />
-
-      {/* Itinerario y cronograma */}
+      {/* SECCIÓN 4: Fotografía 4 (dsc09721.jpg) a Pantalla Completa con Itinerario de la Noche */}
       <ItinerarySection
         itinerary={event.itinerary}
+        backgroundImage={event.gallery[3]?.url || '/fotos/gabriela-torres/dsc09721.jpg'}
       />
 
-      {/* Código de vestimenta */}
+      {/* SECCIÓN 5: Código de Vestimenta */}
       <DressCodeSection
         dressCode={event.dressCode}
       />
 
-      {/* Mesa de regalos y datos bancarios */}
+      {/* SECCIÓN 6: Mesa de Regalos */}
       <GiftSection
         giftRegistry={event.giftRegistry}
       />
 
-      {/* Confirmación de Asistencia (RSVP) */}
+      {/* SECCIÓN 7: Confirmación de Asistencia (RSVP) */}
       <RsvpSection
         slug={event.slug}
         name={event.name}
