@@ -59,6 +59,7 @@ export default function EditorCanvas({
               subtitle={eventData.subtitle}
               date={eventData.date}
               heroImage={eventData.heroImage}
+              imagePosition={eventData.heroImagePosition || 'top'}
             />
           </div>
         );
@@ -73,6 +74,7 @@ export default function EditorCanvas({
               backgroundImage={eventData.gallery[0]?.url || '/fotos/gabriela-torres/dsc09665.jpg'}
               secondaryImage={eventData.gallery[1]?.url || '/fotos/gabriela-torres/dsc09668.jpg'}
               layout={layouts.countdown || 'fullscreen'}
+              imagePosition={eventData.gallery[0]?.position || 'top'}
             />
           </div>
         );
@@ -85,6 +87,7 @@ export default function EditorCanvas({
               backgroundImage={eventData.gallery[1]?.url || '/fotos/gabriela-torres/dsc09668.jpg'}
               secondaryImage={eventData.gallery[2]?.url || '/fotos/gabriela-torres/dsc09709.jpg'}
               layout={layouts.dedication || 'fullscreen'}
+              imagePosition={eventData.gallery[1]?.position || 'top'}
             />
           </div>
         );
@@ -96,6 +99,7 @@ export default function EditorCanvas({
               ceremony={eventData.ceremony}
               party={eventData.party}
               backgroundImage={eventData.gallery[2]?.url || '/fotos/gabriela-torres/dsc09709.jpg'}
+              imagePosition={eventData.gallery[2]?.position || 'top'}
             />
           </div>
         );
@@ -106,6 +110,7 @@ export default function EditorCanvas({
             <ItinerarySection
               itinerary={eventData.itinerary}
               backgroundImage={eventData.gallery[3]?.url || '/fotos/gabriela-torres/dsc09721.jpg'}
+              imagePosition={eventData.gallery[3]?.position || 'top'}
             />
           </div>
         );
@@ -153,7 +158,7 @@ export default function EditorCanvas({
           </div>
         )}
 
-        {/* Renderizado de Secciones Ordenadas Dinámicamente */}
+        {/* Renderizado de Secciones */}
         <div className="flex flex-col">
           {order.map((secId) => renderSection(secId))}
           <FooterSection name={eventData.name} slug={eventData.slug} />

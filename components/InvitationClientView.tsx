@@ -26,7 +26,6 @@ export default function InvitationClientView({ initialEvent, slug }: InvitationC
   });
 
   useEffect(() => {
-    // Sincronizar con localStorage o consultar el endpoint en caso de cambios
     const local = getClientStoredEventBySlug(slug);
     if (local) {
       setEvent(local);
@@ -68,6 +67,7 @@ export default function InvitationClientView({ initialEvent, slug }: InvitationC
             subtitle={event.subtitle}
             date={event.date}
             heroImage={event.heroImage}
+            imagePosition={event.heroImagePosition || 'top'}
           />
         );
 
@@ -81,6 +81,7 @@ export default function InvitationClientView({ initialEvent, slug }: InvitationC
             backgroundImage={event.gallery[0]?.url || '/fotos/gabriela-torres/dsc09665.jpg'}
             secondaryImage={event.gallery[1]?.url || '/fotos/gabriela-torres/dsc09668.jpg'}
             layout={layouts.countdown || 'fullscreen'}
+            imagePosition={event.gallery[0]?.position || 'top'}
           />
         );
 
@@ -92,6 +93,7 @@ export default function InvitationClientView({ initialEvent, slug }: InvitationC
             backgroundImage={event.gallery[1]?.url || '/fotos/gabriela-torres/dsc09668.jpg'}
             secondaryImage={event.gallery[2]?.url || '/fotos/gabriela-torres/dsc09709.jpg'}
             layout={layouts.dedication || 'fullscreen'}
+            imagePosition={event.gallery[1]?.position || 'top'}
           />
         );
 
@@ -102,6 +104,7 @@ export default function InvitationClientView({ initialEvent, slug }: InvitationC
             ceremony={event.ceremony}
             party={event.party}
             backgroundImage={event.gallery[2]?.url || '/fotos/gabriela-torres/dsc09709.jpg'}
+            imagePosition={event.gallery[2]?.position || 'top'}
           />
         );
 
@@ -111,6 +114,7 @@ export default function InvitationClientView({ initialEvent, slug }: InvitationC
             key="itinerary"
             itinerary={event.itinerary}
             backgroundImage={event.gallery[3]?.url || '/fotos/gabriela-torres/dsc09721.jpg'}
+            imagePosition={event.gallery[3]?.position || 'top'}
           />
         );
 
@@ -140,7 +144,7 @@ export default function InvitationClientView({ initialEvent, slug }: InvitationC
       {/* Reproductor de música de fondo flotante con autoplay */}
       <MusicPlayer musicUrl={event.musicUrl} musicTitle={event.musicTitle} />
 
-      {/* Renderizado de Secciones Ordenadas Dinámicamente */}
+      {/* Renderizado de Secciones */}
       <div className="flex flex-col">
         {order.map((secId) => renderSection(secId))}
         <FooterSection name={event.name} slug={event.slug} />

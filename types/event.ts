@@ -6,6 +6,7 @@ export interface EventData {
   subtitle: string;
   date: string; // Formato ISO ej: 2026-11-28T19:00:00
   heroImage: string;
+  heroImagePosition?: 'center' | 'top' | 'bottom' | 'contain';
   musicUrl: string;
   musicTitle: string;
   phrase: string;
@@ -37,6 +38,7 @@ export interface EventData {
     url: string;
     alt?: string;
     caption?: string;
+    position?: 'center' | 'top' | 'bottom' | 'contain';
   }>;
   itinerary: Array<{
     time: string;

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Sliders } from 'lucide-react';
+import { Sliders, Focus, Image as ImageIcon } from 'lucide-react';
 import { EventData } from '@/types/event';
 
 interface EditorInspectorRightProps {
@@ -17,7 +17,6 @@ export default function EditorInspectorRight({
   setEventData,
   markUnsaved,
 }: EditorInspectorRightProps) {
-  // Manejadores para actualizar campos del evento
   const updateField = (path: string, value: any) => {
     markUnsaved();
     setEventData((prev) => {
@@ -32,6 +31,31 @@ export default function EditorInspectorRight({
       current[parts[parts.length - 1]] = value;
       return copy;
     });
+  };
+
+  const getSectionImageIndex = (secId: string) => {
+    switch (secId) {
+      case 'countdown': return 0;
+      case 'dedication': return 1;
+      case 'locations': return 2;
+      case 'itinerary': return 3;
+      default: return -1;
+    }
+  };
+
+  const currentImgPosition = activeSection === 'hero'
+    ? (eventData.heroImagePosition || 'top')
+    : (eventData.gallery[getSectionImageIndex(activeSection)]?.position || 'top');
+
+  const setImgPosition = (pos: 'top' | 'center' | 'bottom' | 'contain') => {
+    if (activeSection === 'hero') {
+      updateField('heroImagePosition', pos);
+    } else {
+      const idx = getSectionImageIndex(activeSection);
+      if (idx >= 0) {
+        updateField(`gallery.${idx}.position`, pos);
+      }
+    }
   };
 
   return (
@@ -51,6 +75,72 @@ export default function EditorInspectorRight({
 
       {/* Controles de la Sección */}
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        {/* HERRAMIENTA: ENCUADRE Y AJUSTE DE FOTO (VERTICAL / HORIZONTAL) */}
+        {['hero', 'countdown', 'dedication', 'locations', 'itinerary'].includes(activeSection) && (
+          <div className="p-3.5 rounded-2xl bg-black/50 border border-rosegold/25 space-y-2.5">
+            <div className="flex items-center gap-1.5 text-rosegold">
+              <Focus className="w-3.5 h-3.5" />
+              <span className="text-[10px] font-semibold uppercase tracking-wider">
+                Encuadre de Foto (Smartphone)
+              </span>
+            </div>
+            <p className="text-[10px] text-gray-400 font-light leading-relaxed">
+              Si la foto es horizontal o se corta el rostro/vestido en el móvil, ajusta el encuadre aquí:
+            </p>
+
+            <div className="grid grid-cols-2 gap-1.5 pt-1">
+              <button
+                type="button"
+                onClick={() => setImgPosition('top')}
+                className={`py-1.5 px-2 rounded-lg text-[10px] font-medium border transition-all truncate ${
+                  currentImgPosition === 'top'
+                    ? 'bg-rosegold/20 border-rosegold text-white font-semibold'
+                    : 'bg-black/40 border-white/5 text-gray-400 hover:text-white'
+                }`}
+              >
+                🎯 Arriba / Rostro
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setImgPosition('center')}
+                className={`py-1.5 px-2 rounded-lg text-[10px] font-medium border transition-all truncate ${
+                  currentImgPosition === 'center'
+                    ? 'bg-rosegold/20 border-rosegold text-white font-semibold'
+                    : 'bg-black/40 border-white/5 text-gray-400 hover:text-white'
+                }`}
+              >
+                🎯 Centro
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setImgPosition('bottom')}
+                className={`py-1.5 px-2 rounded-lg text-[10px] font-medium border transition-all truncate ${
+                  currentImgPosition === 'bottom'
+                    ? 'bg-rosegold/20 border-rosegold text-white font-semibold'
+                    : 'bg-black/40 border-white/5 text-gray-400 hover:text-white'
+                }`}
+              >
+                🎯 Abajo / Vestido
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setImgPosition('contain')}
+                className={`py-1.5 px-2 rounded-lg text-[10px] font-medium border transition-all truncate ${
+                  currentImgPosition === 'contain'
+                    ? 'bg-rosegold/20 border-rosegold text-white font-semibold'
+                    : 'bg-black/40 border-white/5 text-gray-400 hover:text-white'
+                }`}
+                title="Mostrar foto horizontal completa sin recortar bordes"
+              >
+                🖼️ Vista Completa
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* 1. PORTADA (HERO) */}
         {activeSection === 'hero' && (
           <div className="space-y-5">
@@ -89,19 +179,6 @@ export default function EditorInspectorRight({
                 className="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-sm focus:border-rosegold focus:outline-none"
               />
             </div>
-
-            <div className="space-y-2 pt-2">
-              <label className="text-[11px] font-medium text-gray-300 uppercase tracking-wider block">
-                Foto de Portada
-              </label>
-              <div className="flex items-center gap-3 p-2 rounded-xl bg-black/40 border border-white/10">
-                <img src={eventData.heroImage} alt="" className="w-12 h-12 rounded-lg object-cover" />
-                <div className="flex-1 truncate">
-                  <span className="text-xs text-white block truncate">{eventData.heroImage}</span>
-                  <span className="text-[10px] text-rosegold">Portada Completa</span>
-                </div>
-              </div>
-            </div>
           </div>
         )}
 
@@ -131,23 +208,10 @@ export default function EditorInspectorRight({
                 className="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-sm focus:border-rosegold focus:outline-none"
               />
             </div>
-
-            <div className="space-y-2 pt-2">
-              <label className="text-[11px] font-medium text-gray-300 uppercase tracking-wider block">
-                Foto de Fondo (Fotografía 1)
-              </label>
-              <div className="flex items-center gap-3 p-2 rounded-xl bg-black/40 border border-white/10">
-                <img src={eventData.gallery[0]?.url} alt="" className="w-12 h-12 rounded-lg object-cover" />
-                <div className="flex-1 truncate">
-                  <span className="text-xs text-white block truncate">{eventData.gallery[0]?.url}</span>
-                  <span className="text-[10px] text-gray-400">Desvanecimiento perimetral</span>
-                </div>
-              </div>
-            </div>
           </div>
         )}
 
-        {/* 3. DEDICATORIA (PADRES & PADRINOS) */}
+        {/* 3. DEDICATORIA */}
         {activeSection === 'dedication' && (
           <div className="space-y-5">
             <div className="space-y-2">
@@ -186,26 +250,12 @@ export default function EditorInspectorRight({
                 className="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-sm focus:border-rosegold focus:outline-none"
               />
             </div>
-
-            <div className="space-y-2 pt-2">
-              <label className="text-[11px] font-medium text-gray-300 uppercase tracking-wider block">
-                Foto de Fondo (Fotografía 2)
-              </label>
-              <div className="flex items-center gap-3 p-2 rounded-xl bg-black/40 border border-white/10">
-                <img src={eventData.gallery[1]?.url} alt="" className="w-12 h-12 rounded-lg object-cover" />
-                <div className="flex-1 truncate">
-                  <span className="text-xs text-white block truncate">{eventData.gallery[1]?.url}</span>
-                  <span className="text-[10px] text-gray-400">Desvanecimiento perimetral</span>
-                </div>
-              </div>
-            </div>
           </div>
         )}
 
-        {/* 4. UBICACIONES (CEREMONIA & RECEPCIÓN) */}
+        {/* 4. UBICACIONES */}
         {activeSection === 'locations' && (
           <div className="space-y-6">
-            {/* Ceremonia */}
             <div className="space-y-3 p-3.5 rounded-2xl bg-black/40 border border-white/10">
               <span className="text-xs font-semibold text-rosegold block">⛪ Ceremonia Religiosa</span>
               <div className="space-y-2">
@@ -220,7 +270,7 @@ export default function EditorInspectorRight({
                   type="text"
                   value={eventData.ceremony.time}
                   onChange={(e) => updateField('ceremony.time', e.target.value)}
-                  placeholder="Horario (ej. 18:00)"
+                  placeholder="Horario"
                   className="w-full px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-white text-xs focus:border-rosegold focus:outline-none"
                 />
                 <input
@@ -240,7 +290,6 @@ export default function EditorInspectorRight({
               </div>
             </div>
 
-            {/* Recepción */}
             <div className="space-y-3 p-3.5 rounded-2xl bg-black/40 border border-white/10">
               <span className="text-xs font-semibold text-rosegold block">🎉 Recepción & Fiesta</span>
               <div className="space-y-2">
@@ -255,7 +304,7 @@ export default function EditorInspectorRight({
                   type="text"
                   value={eventData.party.time}
                   onChange={(e) => updateField('party.time', e.target.value)}
-                  placeholder="Horario (ej. 20:30)"
+                  placeholder="Horario"
                   className="w-full px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-white text-xs focus:border-rosegold focus:outline-none"
                 />
                 <input
@@ -292,7 +341,7 @@ export default function EditorInspectorRight({
                     value={item.time}
                     onChange={(e) => updateField(`itinerary.${idx}.time`, e.target.value)}
                     placeholder="00:00"
-                    className="w-20 px-2 py-1 rounded bg-black/60 border border-white/10 text-xs font-mono text-rosegold text-center focus:outline-none"
+                    className="w-16 px-2 py-1 rounded bg-black/60 border border-white/10 text-xs font-mono text-rosegold text-center focus:outline-none"
                   />
                   <input
                     type="text"
@@ -340,18 +389,6 @@ export default function EditorInspectorRight({
                 className="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-sm focus:border-rosegold focus:outline-none resize-none"
               />
             </div>
-
-            <div className="space-y-2">
-              <label className="text-[11px] font-medium text-gray-300 uppercase tracking-wider block">
-                Nota de Color Reservado
-              </label>
-              <input
-                type="text"
-                value={eventData.dressCode.colorNotes || ''}
-                onChange={(e) => updateField('dressCode.colorNotes', e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-sm focus:border-rosegold focus:outline-none"
-              />
-            </div>
           </div>
         )}
 
@@ -384,36 +421,12 @@ export default function EditorInspectorRight({
 
             <div className="space-y-2">
               <label className="text-[11px] font-medium text-gray-300 uppercase tracking-wider block">
-                Titular de la Cuenta
-              </label>
-              <input
-                type="text"
-                value={eventData.giftRegistry.accountHolder || ''}
-                onChange={(e) => updateField('giftRegistry.accountHolder', e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-sm focus:border-rosegold focus:outline-none"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[11px] font-medium text-gray-300 uppercase tracking-wider block">
                 Número de Cuenta
               </label>
               <input
                 type="text"
                 value={eventData.giftRegistry.accountNumber || ''}
                 onChange={(e) => updateField('giftRegistry.accountNumber', e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-sm focus:border-rosegold focus:outline-none font-mono"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[11px] font-medium text-gray-300 uppercase tracking-wider block">
-                CLABE / CBU
-              </label>
-              <input
-                type="text"
-                value={eventData.giftRegistry.clabeOrCbu || ''}
-                onChange={(e) => updateField('giftRegistry.clabeOrCbu', e.target.value)}
                 className="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/10 text-white text-sm focus:border-rosegold focus:outline-none font-mono"
               />
             </div>

@@ -8,98 +8,106 @@ import { EventData } from '@/types/event';
 interface ItinerarySectionProps {
   itinerary: EventData['itinerary'];
   backgroundImage?: string;
+  imagePosition?: 'center' | 'top' | 'bottom' | 'contain';
 }
 
 export default function ItinerarySection({
   itinerary,
   backgroundImage = '/fotos/gabriela-torres/dsc09721.jpg',
+  imagePosition = 'top',
 }: ItinerarySectionProps) {
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case 'church':
-        return <Church className="w-4 h-4" />;
+        return <Church className="w-3.5 h-3.5" />;
       case 'cheers':
-        return <GlassWater className="w-4 h-4" />;
+        return <GlassWater className="w-3.5 h-3.5" />;
       case 'music':
-        return <Music className="w-4 h-4" />;
+        return <Music className="w-3.5 h-3.5" />;
       case 'utensils':
-        return <Utensils className="w-4 h-4" />;
+        return <Utensils className="w-3.5 h-3.5" />;
       case 'sparkles':
-        return <Sparkles className="w-4 h-4" />;
+        return <Sparkles className="w-3.5 h-3.5" />;
       case 'moon':
-        return <Moon className="w-4 h-4" />;
+        return <Moon className="w-3.5 h-3.5" />;
       default:
-        return <Clock className="w-4 h-4" />;
+        return <Clock className="w-3.5 h-3.5" />;
+    }
+  };
+
+  const getBgPositionClass = () => {
+    switch (imagePosition) {
+      case 'top':
+        return 'bg-[center_top]';
+      case 'bottom':
+        return 'bg-[center_bottom]';
+      case 'contain':
+        return 'bg-contain bg-no-repeat bg-center';
+      default:
+        return 'bg-center';
     }
   };
 
   return (
-    <section className="relative min-h-[100svh] w-full flex flex-col justify-center items-center overflow-hidden bg-[#131313] py-20 px-6">
+    <section className="relative min-h-[100svh] w-full flex flex-col justify-center items-center overflow-hidden bg-[#131313] py-12 sm:py-20 px-3 sm:px-6">
       {/* Fotografía 4 a Pantalla Completa */}
       <div className="absolute inset-0 z-0">
         <div
-          className="w-full h-full bg-cover bg-[center_top] sm:bg-center transition-transform duration-1000 scale-100 sm:scale-105"
+          className={`w-full h-full bg-cover transition-transform duration-1000 scale-100 sm:scale-105 ${getBgPositionClass()}`}
           style={{ backgroundImage: `url(${backgroundImage})` }}
         />
-        {/* FUSIÓN SUAVE: Difuminado superior e inferior para eliminar cortes */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#131313] via-[#131313]/65 via-20% to-transparent to-45%" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#131313] via-[#131313]/70 via-25% to-transparent to-55%" />
-        <div className="absolute inset-0 bg-black/30" />
+        {/* FUSIÓN SUAVE */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#131313] via-[#131313]/70 via-20% to-transparent to-45%" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#131313] via-[#131313]/75 via-25% to-transparent to-55%" />
+        <div className="absolute inset-0 bg-black/35" />
       </div>
 
       {/* Contenido Superpuesto: Itinerario */}
-      <div className="relative z-10 w-full max-w-4xl mx-auto space-y-12 sm:space-y-16 my-auto">
-        <div className="text-center space-y-3">
+      <div className="relative z-10 w-full max-w-2xl mx-auto space-y-8 sm:space-y-12 my-auto">
+        <div className="text-center space-y-2">
           <span className="text-[10px] sm:text-xs tracking-widest-xl uppercase text-rosegold font-sans font-light block">
             Cronograma de la Noche
           </span>
-          <h2 className="font-serif text-3xl sm:text-5xl text-white font-light drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)]">
+          <h2 className="font-serif text-2xl sm:text-4xl md:text-5xl text-white font-light drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)]">
             Itinerario
           </h2>
-          <div className="w-12 h-[1px] bg-rosegold/50 mx-auto mt-4" />
+          <div className="w-12 h-[1px] bg-rosegold/50 mx-auto mt-2" />
         </div>
 
-        <div className="relative max-w-2xl mx-auto p-6 sm:p-10 rounded-3xl bg-black/50 backdrop-blur-xl border border-rosegold/25 shadow-2xl">
-          {/* Línea vertical sutil */}
-          <div className="absolute left-6 md:left-1/2 top-8 bottom-8 w-[1px] bg-gradient-to-b from-transparent via-rosegold/40 to-transparent -translate-x-1/2" />
+        {/* Tarjeta de Cronograma Optimizada para Móvil */}
+        <div className="relative p-5 sm:p-8 rounded-3xl bg-black/60 backdrop-blur-xl border border-rosegold/25 shadow-2xl">
+          {/* Línea vertical izquierda en móvil */}
+          <div className="absolute left-6 top-6 bottom-6 w-[1px] bg-gradient-to-b from-transparent via-rosegold/40 to-transparent" />
 
-          <div className="space-y-10">
-            {itinerary.map((item, index) => {
-              const isEven = index % 2 === 0;
+          <div className="space-y-6">
+            {itinerary.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.08 }}
+                className="relative flex items-start pl-8"
+              >
+                {/* Ícono circular a la izquierda */}
+                <div className="absolute left-0 top-0.5 -translate-x-1/2 w-8 h-8 rounded-full bg-black/90 border border-rosegold/50 flex items-center justify-center text-rosegold z-10 shadow-md">
+                  {getIcon(item.icon)}
+                </div>
 
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  className={`relative flex flex-col md:flex-row items-start md:items-center ${
-                    isEven ? 'md:flex-row-reverse' : ''
-                  }`}
-                >
-                  {/* Contenido */}
-                  <div className="ml-14 md:ml-0 md:w-1/2 px-2 md:px-6">
-                    <div className={`space-y-1 ${isEven ? 'md:text-left' : 'md:text-right'}`}>
-                      <span className="font-mono text-xs tracking-widest text-rosegold font-medium block">
-                        {item.time} hrs
-                      </span>
-                      <h3 className="font-serif text-lg sm:text-xl text-white font-normal">
-                        {item.title}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Ícono central minimalista */}
-                  <div className="absolute left-6 md:left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-black/80 border border-rosegold/50 flex items-center justify-center text-rosegold z-10 shadow-lg">
-                    {getIcon(item.icon)}
-                  </div>
-                </motion.div>
-              );
-            })}
+                {/* Texto del momento */}
+                <div className="space-y-0.5 flex-1">
+                  <span className="font-mono text-[11px] tracking-wider text-rosegold font-semibold block">
+                    {item.time} hrs
+                  </span>
+                  <h3 className="font-serif text-base sm:text-lg text-white font-normal leading-snug">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-gray-300 font-light leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>
