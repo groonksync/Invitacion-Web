@@ -89,6 +89,7 @@ export default function StudioEditorPage() {
     setHasUnsavedChanges(true);
 
     setEventData((prev) => {
+      if (!prev) return prev;
       const copy = JSON.parse(JSON.stringify(prev));
 
       if (activeSection === 'hero') {
@@ -115,7 +116,7 @@ export default function StudioEditorPage() {
 
   return (
     <div className="h-screen w-screen flex flex-col bg-[#131313] text-gray-100 overflow-hidden font-sans select-none">
-      {/* 1. BARRA SUPERIOR CON SELECTOR DE PLANTILLAS */}
+      {/* 1. BARRA SUPERIOR CON SELECTOR DE PLANTILLAS Y BOTÓN + NUEVA */}
       <EditorTopBar
         slug={slug}
         name={eventData.name}
@@ -127,14 +128,16 @@ export default function StudioEditorPage() {
         onReset={handleReset}
       />
 
-      {/* 2. ÁREA DE TRABAJO (PANEL IZQ + LIENZO + PANEL DER) */}
+      {/* 2. ÁREA DE TRABAJO (PANEL IZQ INTEGRAL + LIENZO + PANEL DER) */}
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Panel Izquierdo: Capas y Fotos */}
+        {/* Panel Izquierdo: Capas, Textos, Fuentes, Efectos, Animaciones y Fotos */}
         <EditorSidebarLeft
           activeSection={activeSection}
           setActiveSection={setActiveSection}
           eventData={eventData}
+          setEventData={setEventData as any}
           onSelectImageForSection={handleSelectImageForSection}
+          markUnsaved={() => setHasUnsavedChanges(true)}
         />
 
         {/* Lienzo Central: Simulador Móvil */}

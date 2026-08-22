@@ -15,13 +15,16 @@ import {
   Link as LinkIcon,
   Smartphone,
   Send,
-  Palette
+  Palette,
+  Plus
 } from 'lucide-react';
+import CreateEventModal from '@/components/editor/CreateEventModal';
 
 export default function HomePage() {
   const events = getAllEvents();
   const [origin, setOrigin] = useState('');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -39,7 +42,7 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-[#0d0a0f] text-gray-100 selection:bg-rose-500 selection:text-white sparkle-bg py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-16">
+      <div className="max-w-6xl mx-auto space-y-14">
         {/* Cabecera Principal */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-950/80 border border-rose-400/30 text-rose-300 text-xs tracking-widest uppercase shadow-lg">
@@ -55,8 +58,19 @@ export default function HomePage() {
           </h1>
 
           <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-            Administra tus invitaciones interactivas, personalízalas en tiempo real con el nuevo <strong>Studio XV Editor</strong>, copia los enlaces para los invitados y entrega a cada familia su panel privado con PIN.
+            Crea nuevas invitaciones desde cero, personalízalas en tiempo real con <strong>Studio XV Editor</strong>, copia los enlaces para los invitados y entrega a cada familia su panel privado con PIN.
           </p>
+
+          {/* Botón Principal + Crear Nueva Invitación */}
+          <div className="pt-4 flex items-center justify-center gap-3">
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-rose-600 via-amber-600 to-rose-600 hover:opacity-95 text-white font-medium text-sm tracking-wider uppercase shadow-xl shadow-rose-950/50 transition-all hover:scale-105"
+            >
+              <Plus className="w-5 h-5" />
+              <span>Crear Nueva Invitación Web</span>
+            </button>
+          </div>
         </div>
 
         {/* Sección de Tarjetas con las Invitaciones y Enlaces de Copiado */}
@@ -65,7 +79,6 @@ export default function HomePage() {
             const isDemo = event.slug === 'gabriela-torres';
             const invitationUrl = origin ? `${origin}/${event.slug}` : `/${event.slug}`;
             const adminUrl = origin ? `${origin}/${event.slug}/admin` : `/${event.slug}/admin`;
-            const editorUrl = origin ? `${origin}/${event.slug}/editor` : `/${event.slug}/editor`;
 
             return (
               <div
@@ -192,7 +205,7 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Botones de Acción (Abrir Editor / Ver en Directo) */}
+                  {/* Botones de Acción */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3 border-t border-white/10">
                     <Link
                       href={`/${event.slug}/editor`}
@@ -224,6 +237,12 @@ export default function HomePage() {
           })}
         </div>
       </div>
+
+      {/* Modal de Creación de Nueva Invitación */}
+      <CreateEventModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </main>
   );
 }

@@ -16,7 +16,9 @@ function ensureDataFile(): Record<string, EventData> {
       return DEFAULT_EVENTS;
     }
     const content = fs.readFileSync(EVENTS_FILE, 'utf-8');
-    return JSON.parse(content);
+    const parsed = JSON.parse(content);
+    // Combinar con los defaults para garantizar que todos los eventos existan
+    return { ...DEFAULT_EVENTS, ...parsed };
   } catch (error) {
     console.error('Error reading events.json:', error);
     return DEFAULT_EVENTS;
@@ -44,6 +46,22 @@ export function saveStoredEvent(slug: string, eventData: EventData): boolean {
     return true;
   } catch (error) {
     console.error('Error saving event:', error);
+    return false;
+  }
+}
+
+export function createNewStoredEvent(slug: string, eventData: EventData): boolean {
+  try {
+    const events = ensureDataFile();
+    events[slug] = {
+      ...eventData,
+      id: `evt-${Date.now()}`,
+      slug,
+    };
+    fs.writeFileSync(EVENTS_FILE, JSON.stringify(events, null, 2), 'utf-8');
+    return true;
+  } catch (error) {
+    console.error('Error creating new event:', error);
     return false;
   }
 }
