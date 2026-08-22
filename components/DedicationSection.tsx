@@ -25,9 +25,10 @@ export default function DedicationSection({
           className="w-full h-full bg-cover bg-[center_top] sm:bg-center transition-transform duration-1000 scale-100 sm:scale-105"
           style={{ backgroundImage: `url(${backgroundImage})` }}
         />
-        {/* Capas de Contraste para Lectura Nítida */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#131313] via-[#131313]/60 to-[#131313]/60" />
-        <div className="absolute inset-0 bg-black/35" />
+        {/* FUSIÓN SUAVE: Difuminado superior e inferior para eliminar cortes */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#131313] via-[#131313]/65 via-20% to-transparent to-45%" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#131313] via-[#131313]/70 via-25% to-transparent to-55%" />
+        <div className="absolute inset-0 bg-black/25" />
       </div>
 
       {/* Contenido Superpuesto: Bendición de Padres */}
@@ -59,7 +60,6 @@ export default function DedicationSection({
             </p>
           </div>
 
-          {/* Padrinos */}
           {parents.godparents && (
             <div className="space-y-2 pt-6">
               <span className="text-[10px] sm:text-xs tracking-widest uppercase text-rosegold-light/80 font-sans font-light block">

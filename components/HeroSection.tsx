@@ -22,15 +22,15 @@ export default function HeroSection({ name, subtitle, date, heroImage }: HeroSec
 
   return (
     <header className="relative min-h-[100svh] w-full flex flex-col justify-end items-center overflow-hidden bg-[#131313]">
-      {/* Fotografía Principal Adaptada a Móvil y Escritorio con Difuminado */}
+      {/* Fotografía Principal Adaptada a Móvil y Escritorio */}
       <div className="absolute inset-0 z-0">
         <div
           className="w-full h-full bg-cover bg-[center_20%] sm:bg-[center_15%] md:bg-center scale-100 sm:scale-105 transition-transform duration-1000"
           style={{ backgroundImage: `url(${heroImage})` }}
         />
-        {/* Capas Cinematográficas de Difuminado perimetral hacia #131313 */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#131313] via-[#131313]/30 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#131313]/50 via-transparent to-[#131313]" />
+        {/* Capas Cinematográficas de Difuminado Suave hacia #131313 sin cortes */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#131313] via-[#131313]/60 via-25% to-transparent to-60%" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#131313]/70 via-transparent to-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_35%,_#131313_95%)]" />
       </div>
 
