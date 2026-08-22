@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Calendar, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 interface HeroSectionProps {
   name: string;
@@ -21,88 +21,74 @@ export default function HeroSection({ name, subtitle, date, heroImage }: HeroSec
   });
 
   return (
-    <header className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-black">
-      {/* Imagen de fondo con parallax/zoom suave y overlay cinematográfico */}
+    <header className="relative min-h-[100svh] w-full flex flex-col justify-end items-center overflow-hidden bg-[#131313]">
+      {/* Fotografía Principal a Pantalla Completa con Viñeta Desvanecida */}
       <div className="absolute inset-0 z-0">
         <div
-          className="w-full h-full bg-cover bg-center transition-transform duration-1000 scale-105"
+          className="w-full h-full bg-cover bg-center sm:bg-top scale-105 transition-transform duration-1000"
           style={{ backgroundImage: `url(${heroImage})` }}
         />
-        {/* Capas de gradiente cinematográfico para legibilidad y elegancia */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0a0f] via-[#0d0a0f]/60 to-[#0d0a0f]/40" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-rose-950/20 via-transparent to-black/80" />
+        {/* Capas de Desvanecimiento Cinematográfico hacia #131313 */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#131313] via-[#131313]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#131313]/60 via-transparent to-[#131313]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_30%,_#131313_90%)]" />
       </div>
 
-      {/* Contenido principal animado */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center pt-16 pb-24 flex flex-col items-center overflow-visible">
-        {/* Distintivo superior */}
+      {/* Zona Inferior: Tipografía Playfair Display Oro Rosa (#E2A4AD) */}
+      <div className="relative z-10 w-full max-w-4xl mx-auto px-6 pb-20 pt-32 text-center flex flex-col items-center">
+        {/* Emblema "XV" en Oro Rosa */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-rose-950/70 border border-rose-400/30 text-rose-300 text-xs tracking-widest uppercase mb-6 backdrop-blur-md shadow-lg"
+          transition={{ duration: 1, ease: 'easeOut' }}
+          className="mb-4"
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" style={{ animationDuration: '8s' }} />
-          <span>Celebremos Juntos</span>
-          <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" style={{ animationDuration: '8s' }} />
+          <span className="font-serif text-3xl sm:text-4xl tracking-[0.4em] text-rosegold font-light block">
+            XV
+          </span>
+          <div className="w-12 h-[1px] bg-rosegold/50 mx-auto mt-2" />
         </motion.div>
 
-        {/* Subtítulo "Mis Quince Años" */}
-        <motion.h2
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-xs sm:text-sm md:text-base font-sans uppercase tracking-[0.4em] text-amber-200/90 font-light mb-3"
+        {/* Subtítulo elegante */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.3 }}
+          className="text-[11px] sm:text-xs tracking-widest-xl uppercase text-rosegold-light/80 font-sans font-light mb-3"
         >
           {subtitle}
-        </motion.h2>
+        </motion.p>
 
-        {/* Nombre de la Quinceañera con padding generoso para caligrafía sin recortes */}
-        <div className="w-full overflow-visible py-2 px-4 flex justify-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.4 }}
-            className="font-cursive text-6xl sm:text-7xl md:text-8xl lg:text-9xl px-6 sm:px-10 py-4 font-normal rose-gradient-text drop-shadow-[0_6px_24px_rgba(244,114,182,0.4)] inline-block overflow-visible leading-[1.25] tracking-normal"
-          >
-            {name}
-          </motion.h1>
-        </div>
-
-        {/* Separador decorativo con flor de lis / rombo */}
-        <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex items-center justify-center gap-4 my-6 w-64 max-w-full"
-        >
-          <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-amber-400/60" />
-          <div className="w-2 h-2 rotate-45 border border-amber-300 bg-amber-400/80 shadow-[0_0_8px_#f59e0b]" />
-          <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-amber-400/60" />
-        </motion.div>
-
-        {/* Fecha del evento */}
-        <motion.div
+        {/* Nombre de la Quinceañera en Playfair Display Mayúsculas de Ultra-Lujo */}
+        <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="flex items-center gap-2 text-rose-100/90 text-sm sm:text-base md:text-lg font-serif italic tracking-wide capitalize bg-black/40 px-5 py-2 rounded-full border border-white/10 backdrop-blur-sm"
+          transition={{ duration: 1.2, delay: 0.5 }}
+          className="font-serif text-4xl sm:text-6xl md:text-7xl font-normal tracking-[0.15em] sm:tracking-[0.2em] uppercase rose-gold-gradient-text drop-shadow-[0_4px_30px_rgba(226,164,173,0.3)] py-2"
         >
-          <Calendar className="w-4 h-4 text-amber-300" />
+          {name}
+        </motion.h1>
+
+        {/* Fecha en sans-serif ligera con mucho aire */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.8 }}
+          className="mt-6 text-xs sm:text-sm tracking-widest uppercase text-gray-300/90 font-sans font-light"
+        >
           <span>{formattedDate}</span>
         </motion.div>
       </div>
 
-      {/* Flecha indicadora de Scroll */}
+      {/* Indicador de Desplazamiento Minimalista */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 1 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 text-rose-300/70 cursor-pointer"
-        onClick={() => window.scrollTo({ top: window.innerHeight * 0.9, behavior: 'smooth' })}
+        transition={{ delay: 1.4, duration: 1 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 text-rosegold/60 cursor-pointer"
+        onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
       >
-        <span className="text-[10px] uppercase tracking-widest font-sans">Desliza</span>
-        <ChevronDown className="w-5 h-5 animate-bounce text-amber-300" />
+        <ChevronDown className="w-4 h-4 animate-bounce text-rosegold" />
       </motion.div>
     </header>
   );

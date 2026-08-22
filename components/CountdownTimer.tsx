@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Clock } from 'lucide-react';
 
 interface CountdownTimerProps {
   targetDate: string;
@@ -49,47 +48,45 @@ export default function CountdownTimer({ targetDate }: CountdownTimerProps) {
   }, [targetDate]);
 
   const timeBlocks = [
-    { label: 'Días', value: timeLeft.days },
-    { label: 'Horas', value: timeLeft.hours },
-    { label: 'Minutos', value: timeLeft.minutes },
-    { label: 'Segundos', value: timeLeft.seconds },
+    { label: 'DÍAS', value: timeLeft.days },
+    { label: 'HORAS', value: timeLeft.hours },
+    { label: 'MINUTOS', value: timeLeft.minutes },
+    { label: 'SEGUNDOS', value: timeLeft.seconds },
   ];
 
   return (
-    <section className="relative py-16 px-4 -mt-10 z-20 max-w-4xl mx-auto">
+    <section className="py-20 px-6 max-w-3xl mx-auto text-center">
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="glass-card-gold rounded-3xl p-6 sm:p-8 text-center"
+        transition={{ duration: 1 }}
+        className="space-y-8"
       >
-        <div className="flex items-center justify-center gap-2 mb-6 text-amber-300">
-          <Clock className="w-5 h-5 animate-pulse" />
-          <span className="font-serif italic text-sm tracking-wider uppercase">Faltan Solo</span>
-        </div>
+        <span className="text-[11px] sm:text-xs tracking-widest-xl uppercase text-rosegold font-sans font-light block">
+          Cada Segundo Cuenta
+        </span>
 
         {timeLeft.isFinished ? (
-          <div className="py-4 text-2xl font-serif text-rose-300">
-            ¡Hoy es el gran día de celebración! 🎉
+          <div className="py-4 font-serif text-2xl text-rosegold">
+            ¡Hoy es el gran día!
           </div>
         ) : (
-          <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-6">
+          <div className="flex items-center justify-center gap-4 sm:gap-8 md:gap-12">
             {timeBlocks.map((block, idx) => (
-              <div
-                key={idx}
-                className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-black/40 border border-rose-400/20 backdrop-blur-md shadow-inner"
-              >
-                <span className="font-serif text-2xl sm:text-4xl md:text-5xl font-bold gold-gradient-text tracking-tight">
+              <div key={idx} className="flex flex-col items-center">
+                <span className="font-serif text-3xl sm:text-5xl md:text-6xl font-light text-rosegold tracking-tight">
                   {String(block.value).padStart(2, '0')}
                 </span>
-                <span className="text-[10px] sm:text-xs uppercase tracking-widest text-rose-200/70 font-sans mt-1">
+                <span className="text-[9px] sm:text-[10px] tracking-[0.25em] text-gray-400 font-sans font-light mt-2">
                   {block.label}
                 </span>
               </div>
             ))}
           </div>
         )}
+
+        <div className="w-16 h-[1px] bg-rosegold/30 mx-auto mt-6" />
       </motion.div>
     </section>
   );

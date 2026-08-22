@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Gift, Copy, Check, ExternalLink, CreditCard } from 'lucide-react';
+import { Copy, Check, ExternalLink } from 'lucide-react';
 import { EventData } from '@/types/event';
 
 interface GiftSectionProps {
@@ -21,67 +21,56 @@ export default function GiftSection({ giftRegistry }: GiftSectionProps) {
   };
 
   return (
-    <section className="py-20 px-4 max-w-3xl mx-auto text-center">
+    <section className="py-24 sm:py-32 px-6 max-w-3xl mx-auto text-center">
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 25 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="glass-card rounded-3xl p-8 sm:p-12 border-rose-400/20"
+        transition={{ duration: 1 }}
+        className="space-y-8"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-950/60 border border-rose-400/30 text-rose-300 text-xs tracking-widest uppercase mb-4">
-          <Gift className="w-3.5 h-3.5 text-amber-300" />
-          <span>Mesa de Regalos</span>
-        </div>
+        <span className="text-[11px] sm:text-xs tracking-widest-xl uppercase text-rosegold font-sans font-light block">
+          Mesa de Regalos
+        </span>
 
-        <h2 className="font-serif text-3xl sm:text-4xl text-white font-medium mb-3">
+        <h2 className="font-serif text-3xl sm:text-4xl text-white font-light">
           {giftRegistry.title}
         </h2>
 
-        <p className="text-gray-300 text-sm sm:text-base max-w-lg mx-auto mb-8 leading-relaxed">
+        <p className="text-gray-300 text-sm sm:text-base max-w-lg mx-auto font-light leading-relaxed">
           {giftRegistry.description}
         </p>
 
-        {/* Tarjeta de Datos Bancarios */}
+        {/* Datos Bancarios Integrados */}
         {(giftRegistry.bankName || giftRegistry.accountNumber) && (
-          <div className="bg-black/50 border border-amber-400/25 rounded-2xl p-6 text-left max-w-md mx-auto mb-6 shadow-xl">
-            <div className="flex items-center justify-between border-b border-rose-400/20 pb-3 mb-4">
-              <div className="flex items-center gap-2 text-amber-300 text-sm font-medium">
-                <CreditCard className="w-4 h-4" />
-                <span>Datos para Transferencia</span>
-              </div>
-              <span className="text-xs text-rose-300/80 font-sans">{giftRegistry.bankName}</span>
+          <div className="max-w-md mx-auto p-6 sm:p-8 rounded-3xl bg-[#1A1A1A]/80 border border-rosegold/20 text-left space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <span className="text-xs tracking-widest uppercase text-rosegold font-sans font-medium">
+                Transferencia
+              </span>
+              <span className="text-xs text-gray-400 font-sans">{giftRegistry.bankName}</span>
             </div>
 
-            <div className="space-y-3 text-sm">
+            <div className="space-y-3 text-xs sm:text-sm font-light">
               {giftRegistry.accountHolder && (
                 <div>
-                  <span className="text-[11px] uppercase tracking-wider text-gray-400 block">Titular:</span>
-                  <span className="font-medium text-white">{giftRegistry.accountHolder}</span>
+                  <span className="text-[10px] tracking-wider uppercase text-gray-500 block">Titular:</span>
+                  <span className="text-gray-200 font-serif">{giftRegistry.accountHolder}</span>
                 </div>
               )}
 
               {giftRegistry.accountNumber && (
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[11px] uppercase tracking-wider text-gray-400 block">N° Cuenta:</span>
-                    <span className="font-mono text-amber-200">{giftRegistry.accountNumber}</span>
+                    <span className="text-[10px] tracking-wider uppercase text-gray-500 block">Cuenta:</span>
+                    <span className="font-mono text-rosegold-light">{giftRegistry.accountNumber}</span>
                   </div>
                   <button
                     onClick={() => copyToClipboard(giftRegistry.accountNumber!, 'account')}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-950/80 border border-rose-400/30 text-rose-200 text-xs hover:bg-rose-900 transition-colors"
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-rosegold transition-colors"
+                    title="Copiar"
                   >
-                    {copiedField === 'account' ? (
-                      <>
-                        <Check className="w-3 h-3 text-green-400" />
-                        <span className="text-green-400">¡Copiado!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3 h-3" />
-                        <span>Copiar</span>
-                      </>
-                    )}
+                    {copiedField === 'account' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                   </button>
                 </div>
               )}
@@ -89,24 +78,15 @@ export default function GiftSection({ giftRegistry }: GiftSectionProps) {
               {giftRegistry.clabeOrCbu && (
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[11px] uppercase tracking-wider text-gray-400 block">CLABE / CBU:</span>
-                    <span className="font-mono text-amber-200">{giftRegistry.clabeOrCbu}</span>
+                    <span className="text-[10px] tracking-wider uppercase text-gray-500 block">CLABE:</span>
+                    <span className="font-mono text-rosegold-light">{giftRegistry.clabeOrCbu}</span>
                   </div>
                   <button
                     onClick={() => copyToClipboard(giftRegistry.clabeOrCbu!, 'clabe')}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-950/80 border border-rose-400/30 text-rose-200 text-xs hover:bg-rose-900 transition-colors"
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-rosegold transition-colors"
+                    title="Copiar"
                   >
-                    {copiedField === 'clabe' ? (
-                      <>
-                        <Check className="w-3 h-3 text-green-400" />
-                        <span className="text-green-400">¡Copiado!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3 h-3" />
-                        <span>Copiar</span>
-                      </>
-                    )}
+                    {copiedField === 'clabe' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                   </button>
                 </div>
               )}
@@ -114,24 +94,15 @@ export default function GiftSection({ giftRegistry }: GiftSectionProps) {
               {giftRegistry.alias && (
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[11px] uppercase tracking-wider text-gray-400 block">Alias:</span>
-                    <span className="font-mono text-rose-200 font-bold">{giftRegistry.alias}</span>
+                    <span className="text-[10px] tracking-wider uppercase text-gray-500 block">Alias:</span>
+                    <span className="font-mono text-rosegold font-bold">{giftRegistry.alias}</span>
                   </div>
                   <button
                     onClick={() => copyToClipboard(giftRegistry.alias!, 'alias')}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-950/80 border border-rose-400/30 text-rose-200 text-xs hover:bg-rose-900 transition-colors"
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-rosegold transition-colors"
+                    title="Copiar"
                   >
-                    {copiedField === 'alias' ? (
-                      <>
-                        <Check className="w-3 h-3 text-green-400" />
-                        <span className="text-green-400">¡Copiado!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3 h-3" />
-                        <span>Copiar</span>
-                      </>
-                    )}
+                    {copiedField === 'alias' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                   </button>
                 </div>
               )}
@@ -139,18 +110,21 @@ export default function GiftSection({ giftRegistry }: GiftSectionProps) {
           </div>
         )}
 
-        {/* Botón de Mesa de Regalos Externa */}
         {giftRegistry.wishListUrl && (
-          <a
-            href={giftRegistry.wishListUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-500 hover:to-rose-500 text-white font-medium text-sm shadow-lg shadow-rose-950/50 transition-all transform hover:scale-105"
-          >
-            <span>Ver Mesa de Regalos Online</span>
-            <ExternalLink className="w-4 h-4" />
-          </a>
+          <div className="pt-2">
+            <a
+              href={giftRegistry.wishListUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-rosegold/30 hover:bg-rosegold/10 text-rosegold text-xs tracking-widest uppercase transition-all"
+            >
+              <span>Ver Mesa Online</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          </div>
         )}
+
+        <div className="w-12 h-[1px] bg-rosegold/30 mx-auto mt-8" />
       </motion.div>
     </section>
   );

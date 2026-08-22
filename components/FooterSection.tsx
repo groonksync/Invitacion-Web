@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Heart, ChevronUp, Lock } from 'lucide-react';
+import { ChevronUp, Lock } from 'lucide-react';
 
 interface FooterSectionProps {
   name: string;
@@ -15,38 +15,32 @@ export default function FooterSection({ name, slug }: FooterSectionProps) {
   };
 
   return (
-    <footer className="relative py-16 px-4 border-t border-rose-400/20 bg-black/80 text-center overflow-hidden">
-      <div className="max-w-2xl mx-auto space-y-6">
+    <footer className="py-24 px-6 text-center bg-[#131313] border-t border-white/5 space-y-8">
+      <div className="max-w-xl mx-auto space-y-6">
         <button
           onClick={scrollToTop}
-          className="p-3 rounded-full bg-rose-950/70 border border-rose-400/30 text-rose-300 hover:text-white hover:bg-rose-900 transition-colors mx-auto inline-flex items-center justify-center mb-4"
+          className="p-3 rounded-full border border-rosegold/30 text-rosegold hover:bg-rosegold/10 transition-colors mx-auto inline-flex items-center justify-center"
           title="Volver arriba"
         >
-          <ChevronUp className="w-5 h-5" />
+          <ChevronUp className="w-4 h-4" />
         </button>
 
-        <h3 className="font-cursive text-4xl sm:text-5xl rose-gradient-text">
+        <h3 className="font-serif text-3xl sm:text-4xl text-white font-light tracking-widest uppercase">
           {name}
         </h3>
 
-        <p className="font-serif italic text-gray-300 text-sm sm:text-base">
-          ¡Gracias por ser parte de este momento tan especial en mi vida!
+        <p className="font-serif italic text-gray-400 text-sm sm:text-base font-light">
+          Gracias por acompañarme en el inicio de esta nueva etapa.
         </p>
 
-        <div className="flex items-center justify-center gap-1 text-rose-400/60 text-xs font-sans">
-          <span>Hecho con</span>
-          <Heart className="w-3.5 h-3.5 fill-current text-rose-500" />
-          <span>para una noche mágica</span>
-        </div>
-
-        {/* Acceso para los padres / anfitriones */}
-        <div className="pt-6">
+        {/* Acceso para los anfitriones */}
+        <div className="pt-8">
           <Link
             href={`/${slug}/admin`}
-            className="inline-flex items-center gap-1.5 text-[11px] text-gray-500 hover:text-rose-300 transition-colors font-sans"
+            className="inline-flex items-center gap-1.5 text-[10px] tracking-widest uppercase text-gray-500 hover:text-rosegold transition-colors font-sans"
           >
             <Lock className="w-3 h-3" />
-            <span>Panel de Anfitriones (Control de Asistencia)</span>
+            <span>Panel de Anfitriones</span>
           </Link>
         </div>
       </div>
