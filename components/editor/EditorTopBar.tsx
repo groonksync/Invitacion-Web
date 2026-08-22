@@ -2,7 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Smartphone, Tablet, Monitor, Save, ExternalLink, Sparkles, Check, ArrowLeft, RotateCcw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Smartphone, Tablet, Monitor, Save, ExternalLink, Sparkles, Check, ArrowLeft, RotateCcw, ChevronDown } from 'lucide-react';
+import { EVENTS } from '@/data/events';
 
 interface EditorTopBarProps {
   slug: string;
@@ -25,10 +27,22 @@ export default function EditorTopBar({
   hasUnsavedChanges,
   onReset,
 }: EditorTopBarProps) {
+  const router = useRouter();
+  const allEvents = Object.values(EVENTS);
+
+  const handleSwitchEvent = (newSlug: string) => {
+    if (hasUnsavedChanges) {
+      if (!confirm('Tienes cambios sin guardar. ¿Deseas cambiar de plantilla de todos modos?')) {
+        return;
+      }
+    }
+    router.push(`/${newSlug}/editor`);
+  };
+
   return (
     <header className="h-16 bg-[#181818] border-b border-white/10 px-4 flex items-center justify-between z-30 shrink-0 select-none">
-      {/* Lado Izquierdo: Volver y Nombre del Proyecto */}
-      <div className="flex items-center gap-4">
+      {/* Lado Izquierdo: Volver y Selector de Plantilla */}
+      <div className="flex items-center gap-3">
         <Link
           href="/"
           className="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
@@ -38,21 +52,35 @@ export default function EditorTopBar({
         </Link>
 
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-rose-600 via-amber-500 to-rose-600 flex items-center justify-center text-white shadow-md">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-rose-600 via-amber-500 to-rose-600 flex items-center justify-center text-white shadow-md shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
-          <div>
+
+          <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <span className="font-serif text-sm font-semibold text-white tracking-wide">
+              <span className="font-serif text-xs sm:text-sm font-semibold text-white tracking-wide">
                 STUDIO XV
               </span>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-mono uppercase bg-rosegold/20 text-rosegold-light border border-rosegold/30">
-                PRO EDITOR
+              <span className="hidden sm:inline-block px-1.5 py-0.5 rounded text-[9px] font-mono uppercase bg-rosegold/20 text-rosegold-light border border-rosegold/30">
+                EDITOR
               </span>
             </div>
-            <span className="text-[11px] text-gray-400 font-sans block truncate max-w-[160px]">
-              {name}
-            </span>
+
+            {/* Menú Desplegable para Cambiar de Plantilla al Instante */}
+            <div className="relative flex items-center mt-0.5">
+              <select
+                value={slug}
+                onChange={(e) => handleSwitchEvent(e.target.value)}
+                className="appearance-none bg-black/60 hover:bg-black/80 text-rosegold-light text-xs font-medium pl-2 pr-6 py-0.5 rounded-lg border border-rosegold/30 focus:outline-none cursor-pointer"
+              >
+                {allEvents.map((evt) => (
+                  <option key={evt.slug} value={evt.slug} className="bg-[#181818] text-white">
+                    {evt.name} ({evt.slug})
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="w-3 h-3 text-rosegold absolute right-1.5 pointer-events-none" />
+            </div>
           </div>
         </div>
       </div>
@@ -100,7 +128,7 @@ export default function EditorTopBar({
       </div>
 
       {/* Lado Derecho: Acciones (Reset, Previsualizar, Guardar y Publicar) */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         {/* Botón de Reiniciar Cambios */}
         <button
           onClick={onReset}
@@ -126,7 +154,7 @@ export default function EditorTopBar({
         <button
           onClick={onSave}
           disabled={isSaving}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium tracking-wide uppercase transition-all shadow-lg ${
+          className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-medium tracking-wide uppercase transition-all shadow-lg ${
             hasUnsavedChanges
               ? 'bg-gradient-to-r from-[#C97D88] via-[#E2A4AD] to-[#C97D88] text-[#131313] hover:opacity-95 shadow-rosegold/20'
               : 'bg-emerald-600 text-white hover:bg-emerald-500'
@@ -139,7 +167,7 @@ export default function EditorTopBar({
           ) : (
             <Check className="w-3.5 h-3.5" />
           )}
-          <span>{isSaving ? 'Guardando...' : hasUnsavedChanges ? 'Publicar' : 'Guardado'}</span>
+          <span>{isSaving ? '...' : hasUnsavedChanges ? 'Publicar' : 'Guardado'}</span>
         </button>
       </div>
     </header>

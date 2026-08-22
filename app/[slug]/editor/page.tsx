@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { notFound, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { EVENTS } from '@/data/events';
 import { EventData } from '@/types/event';
 import EditorTopBar from '@/components/editor/EditorTopBar';
@@ -11,22 +11,33 @@ import EditorInspectorRight from '@/components/editor/EditorInspectorRight';
 
 export default function StudioEditorPage() {
   const params = useParams();
-  const slug = (params?.slug as string) || 'gabriela-torres';
+  const rawSlug = params?.slug;
+  const slug = typeof rawSlug === 'string' ? rawSlug : Array.isArray(rawSlug) ? rawSlug[0] : 'gabriela-torres';
 
-  const [initialData, setInitialData] = useState<EventData | null>(null);
-  const [eventData, setEventData] = useState<EventData | null>(null);
+  // Obtener plantilla base de forma síncrona para evitar pantalla blanca
+  const getInitialEvent = (targetSlug: string): EventData => {
+    return (
+      EVENTS[targetSlug] ||
+      EVENTS['gabriela-torres'] ||
+      EVENTS['valeria-15'] ||
+      Object.values(EVENTS)[0]
+    );
+  };
+
+  const [initialData, setInitialData] = useState<EventData>(() => getInitialEvent(slug));
+  const [eventData, setEventData] = useState<EventData>(() => getInitialEvent(slug));
   const [activeSection, setActiveSection] = useState<string>('hero');
   const [deviceMode, setDeviceMode] = useState<'mobile' | 'tablet' | 'desktop'>('mobile');
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
+  // Sincronizar cuando cambia el slug de la URL
   useEffect(() => {
-    const base = EVENTS[slug] || EVENTS['gabriela-torres'];
-    if (base) {
-      setInitialData(JSON.parse(JSON.stringify(base)));
-      setEventData(JSON.parse(JSON.stringify(base)));
-    }
+    const fresh = getInitialEvent(slug);
+    setInitialData(JSON.parse(JSON.stringify(fresh)));
+    setEventData(JSON.parse(JSON.stringify(fresh)));
+    setHasUnsavedChanges(false);
   }, [slug]);
 
   const showToast = (text: string, type: 'success' | 'error') => {
@@ -78,8 +89,7 @@ export default function StudioEditorPage() {
     setHasUnsavedChanges(true);
 
     setEventData((prev) => {
-      if (!prev) return prev;
-      const copy = { ...prev };
+      const copy = JSON.parse(JSON.stringify(prev));
 
       if (activeSection === 'hero') {
         copy.heroImage = imageUrl;
@@ -103,20 +113,9 @@ export default function StudioEditorPage() {
     showToast(`Foto asignada a la sección: ${activeSection}`, 'success');
   };
 
-  if (!eventData) {
-    return (
-      <div className="h-screen w-screen bg-[#131313] flex items-center justify-center text-white">
-        <div className="flex items-center gap-3 text-rosegold">
-          <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-          <span>Cargando Studio XV Editor...</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="h-screen w-screen flex flex-col bg-[#131313] text-gray-100 overflow-hidden font-sans">
-      {/* 1. BARRA SUPERIOR */}
+    <div className="h-screen w-screen flex flex-col bg-[#131313] text-gray-100 overflow-hidden font-sans select-none">
+      {/* 1. BARRA SUPERIOR CON SELECTOR DE PLANTILLAS */}
       <EditorTopBar
         slug={slug}
         name={eventData.name}
@@ -150,7 +149,7 @@ export default function StudioEditorPage() {
         <EditorInspectorRight
           activeSection={activeSection}
           eventData={eventData}
-          setEventData={setEventData}
+          setEventData={setEventData as any}
           markUnsaved={() => setHasUnsavedChanges(true)}
         />
       </div>
