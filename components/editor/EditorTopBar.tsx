@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -17,7 +17,9 @@ import {
   Plus
 } from 'lucide-react';
 import { EVENTS } from '@/data/events';
+import { getClientStoredEvents } from '@/lib/clientEventStorage';
 import CreateEventModal from './CreateEventModal';
+import { EventData } from '@/types/event';
 
 interface EditorTopBarProps {
   slug: string;
@@ -41,8 +43,17 @@ export default function EditorTopBar({
   onReset,
 }: EditorTopBarProps) {
   const router = useRouter();
-  const allEvents = Object.values(EVENTS);
+  const [allEvents, setAllEvents] = useState<EventData[]>(() => Object.values(EVENTS));
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = Object.values(getClientStoredEvents());
+      if (stored.length > 0) {
+        setAllEvents(stored);
+      }
+    }
+  }, [isCreateModalOpen]);
 
   const handleSwitchEvent = (newSlug: string) => {
     if (hasUnsavedChanges) {
@@ -90,7 +101,7 @@ export default function EditorTopBar({
                 >
                   {allEvents.map((evt) => (
                     <option key={evt.slug} value={evt.slug} className="bg-[#181818] text-white">
-                      {evt.name}
+                      {evt.name} ({evt.slug})
                     </option>
                   ))}
                 </select>

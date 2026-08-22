@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { EVENTS } from '@/data/events';
+import { getClientStoredEventBySlug, saveClientStoredEvent } from '@/lib/clientEventStorage';
 import { EventData } from '@/types/event';
 import EditorTopBar from '@/components/editor/EditorTopBar';
 import EditorSidebarLeft from '@/components/editor/EditorSidebarLeft';
@@ -14,12 +15,12 @@ export default function StudioEditorPage() {
   const rawSlug = params?.slug;
   const slug = typeof rawSlug === 'string' ? rawSlug : Array.isArray(rawSlug) ? rawSlug[0] : 'gabriela-torres';
 
-  // Obtener plantilla base de forma síncrona para evitar pantalla blanca
+  // Obtener plantilla base desde localStorage o defaults
   const getInitialEvent = (targetSlug: string): EventData => {
     return (
+      getClientStoredEventBySlug(targetSlug) ||
       EVENTS[targetSlug] ||
       EVENTS['gabriela-torres'] ||
-      EVENTS['valeria-15'] ||
       Object.values(EVENTS)[0]
     );
   };
@@ -32,7 +33,7 @@ export default function StudioEditorPage() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
-  // Sincronizar cuando cambia el slug de la URL
+  // Sincronizar cuando cambia el slug o al montar en el navegador
   useEffect(() => {
     const fresh = getInitialEvent(slug);
     setInitialData(JSON.parse(JSON.stringify(fresh)));
@@ -52,16 +53,18 @@ export default function StudioEditorPage() {
     setIsSaving(true);
 
     try {
-      const res = await fetch('/api/events/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, eventData }),
-      });
+      // 1. Guardar en localStorage del cliente
+      saveClientStoredEvent(slug, eventData);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Error al guardar');
+      // 2. Guardar en API del servidor
+      try {
+        await fetch('/api/events/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug, eventData }),
+        });
+      } catch (e) {
+        console.warn('Server save warning:', e);
       }
 
       setInitialData(JSON.parse(JSON.stringify(eventData)));
@@ -116,7 +119,7 @@ export default function StudioEditorPage() {
 
   return (
     <div className="h-screen w-screen flex flex-col bg-[#131313] text-gray-100 overflow-hidden font-sans select-none">
-      {/* 1. BARRA SUPERIOR CON SELECTOR DE PLANTILLAS Y BOTÓN + NUEVA */}
+      {/* 1. BARRA SUPERIOR */}
       <EditorTopBar
         slug={slug}
         name={eventData.name}
@@ -128,9 +131,9 @@ export default function StudioEditorPage() {
         onReset={handleReset}
       />
 
-      {/* 2. ÁREA DE TRABAJO (PANEL IZQ INTEGRAL + LIENZO + PANEL DER) */}
+      {/* 2. ÁREA DE TRABAJO */}
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Panel Izquierdo: Capas, Textos, Fuentes, Efectos, Animaciones y Fotos */}
+        {/* Panel Izquierdo */}
         <EditorSidebarLeft
           activeSection={activeSection}
           setActiveSection={setActiveSection}
@@ -148,7 +151,7 @@ export default function StudioEditorPage() {
           deviceMode={deviceMode}
         />
 
-        {/* Panel Derecho: Inspector de Propiedades */}
+        {/* Panel Derecho: Inspector */}
         <EditorInspectorRight
           activeSection={activeSection}
           eventData={eventData}

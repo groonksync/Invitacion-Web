@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Sparkles, Plus, Copy, CheckCircle2, AlertCircle } from 'lucide-react';
-import { EVENTS } from '@/data/events';
+import { X, Sparkles, Plus, AlertCircle } from 'lucide-react';
+import { getClientStoredEvents, saveClientStoredEvent } from '@/lib/clientEventStorage';
+import { EventData } from '@/types/event';
 
 interface CreateEventModalProps {
   isOpen: boolean;
@@ -12,7 +13,7 @@ interface CreateEventModalProps {
 
 export default function CreateEventModal({ isOpen, onClose }: CreateEventModalProps) {
   const router = useRouter();
-  const allEvents = Object.values(EVENTS);
+  const allEvents = Object.values(getClientStoredEvents());
 
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
@@ -26,7 +27,6 @@ export default function CreateEventModal({ isOpen, onClose }: CreateEventModalPr
 
   const handleNameChange = (val: string) => {
     setName(val);
-    // Generar slug sugerido automáticamente a partir del nombre
     const autoSlug = val
       .toLowerCase()
       .trim()
@@ -41,40 +41,69 @@ export default function CreateEventModal({ isOpen, onClose }: CreateEventModalPr
     e.preventDefault();
     setErrorMsg('');
 
-    if (!name.trim()) {
+    const cleanName = name.trim();
+    const cleanSlug = slug
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[\s_]+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+
+    if (!cleanName) {
       setErrorMsg('Por favor ingresa el nombre de la quinceañera.');
       return;
     }
 
-    if (!slug.trim()) {
-      setErrorMsg('Por favor define un enlace o slug (ej. camila-15).');
+    if (!cleanSlug) {
+      setErrorMsg('Por favor define un enlace o slug válido (ej. luz-garcia).');
       return;
     }
 
     setLoading(true);
 
     try {
-      const res = await fetch('/api/events/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: name.trim(),
-          slug: slug.trim(),
-          subtitle: subtitle.trim(),
-          date: date || undefined,
-          templateSlug,
-        }),
-      });
+      // 1. Obtener la plantilla base
+      const currentEvents = getClientStoredEvents();
+      const baseTemplate: EventData =
+        currentEvents[templateSlug] ||
+        currentEvents['gabriela-torres'] ||
+        Object.values(currentEvents)[0];
 
-      const data = await res.json();
+      // 2. Construir el nuevo evento
+      const newEvent: EventData = {
+        ...JSON.parse(JSON.stringify(baseTemplate)),
+        id: `evt-${Date.now()}`,
+        slug: cleanSlug,
+        name: cleanName,
+        subtitle: subtitle?.trim() || 'Mis Quince Años',
+        date: date || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 19),
+        phraseAuthor: cleanName,
+      };
 
-      if (!res.ok) {
-        throw new Error(data.error || 'Error al crear la invitación');
+      // 3. Guardar de forma inmediata en el almacenamiento local del cliente
+      saveClientStoredEvent(cleanSlug, newEvent);
+
+      // 4. Notificar a la API del servidor (asíncrono con fallback)
+      try {
+        await fetch('/api/events/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: cleanName,
+            slug: cleanSlug,
+            subtitle: subtitle.trim(),
+            date: date || undefined,
+            templateSlug,
+          }),
+        });
+      } catch (apiErr) {
+        console.warn('API sync warning (client saved successfully):', apiErr);
       }
 
       onClose();
-      // Redirigir al editor de la nueva invitación creada
-      router.push(`/${data.slug}/editor`);
+      // 5. Redirigir de inmediato al editor de la nueva quinceañera creada
+      router.push(`/${cleanSlug}/editor`);
     } catch (err: any) {
       console.error(err);
       setErrorMsg(err.message || 'Ocurrió un error al crear la invitación.');
@@ -129,7 +158,7 @@ export default function CreateEventModal({ isOpen, onClose }: CreateEventModalPr
               required
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="Ej. Camila Hernández"
+              placeholder="Ej. Luz García"
               className="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/10 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-rosegold transition-colors"
             />
           </div>
@@ -146,7 +175,7 @@ export default function CreateEventModal({ isOpen, onClose }: CreateEventModalPr
                 required
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
-                placeholder="camila-15"
+                placeholder="luz-garcia"
                 className="bg-transparent text-rosegold-light font-mono font-medium focus:outline-none flex-1 ml-1"
               />
             </div>

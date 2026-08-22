@@ -3,25 +3,23 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getAllEvents } from '@/data/events';
+import { getClientStoredEvents } from '@/lib/clientEventStorage';
+import { EventData } from '@/types/event';
 import {
   Sparkles,
   Eye,
   ShieldCheck,
   Copy,
   Check,
-  Share2,
-  ExternalLink,
   Lock,
   Link as LinkIcon,
-  Smartphone,
-  Send,
   Palette,
   Plus
 } from 'lucide-react';
 import CreateEventModal from '@/components/editor/CreateEventModal';
 
 export default function HomePage() {
-  const events = getAllEvents();
+  const [events, setEvents] = useState<EventData[]>(() => getAllEvents());
   const [origin, setOrigin] = useState('');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -29,8 +27,12 @@ export default function HomePage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setOrigin(window.location.origin);
+      const allClientEvents = Object.values(getClientStoredEvents());
+      if (allClientEvents.length > 0) {
+        setEvents(allClientEvents);
+      }
     }
-  }, []);
+  }, [isCreateModalOpen]);
 
   const copyToClipboard = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
@@ -82,7 +84,7 @@ export default function HomePage() {
 
             return (
               <div
-                key={event.id}
+                key={event.id || event.slug}
                 className={`glass-card rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:border-amber-400/50 hover:shadow-2xl ${
                   isDemo ? 'border-rose-400/40 shadow-rose-950/50' : 'border-white/10'
                 }`}
