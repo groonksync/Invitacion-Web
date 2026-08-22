@@ -17,6 +17,11 @@
 .DS_Store
 *.pem
 
+# external / heavy folders
+/Equipo Creativo MV
+/Fotografias XV
+/Musica
+
 # debug
 npm-debug.log*
 yarn-debug.log*

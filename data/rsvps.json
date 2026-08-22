@@ -1,5 +1,38 @@
 [
   {
+    "id": "rsvp-gab-001",
+    "slug": "gabriela-torres",
+    "fullName": "Familia Méndez Salazar",
+    "attending": true,
+    "guestsCount": 4,
+    "phone": "+52 55 2345 6789",
+    "dietaryRestrictions": "1 menú infantil",
+    "message": "¡Felicidades Gaby hermosa! Te deseamos una noche mágica y llena de bendiciones. ¡Allí estaremos con toda la familia!",
+    "createdAt": "2026-08-21T15:30:00.000Z"
+  },
+  {
+    "id": "rsvp-gab-002",
+    "slug": "gabriela-torres",
+    "fullName": "Camila Rodríguez & Amigas",
+    "attending": true,
+    "guestsCount": 3,
+    "phone": "+52 55 8765 4321",
+    "dietaryRestrictions": "",
+    "message": "¡Gabyyyy lista para la hora loca y bailar toda la noche! Te queremos.",
+    "createdAt": "2026-08-21T18:00:00.000Z"
+  },
+  {
+    "id": "rsvp-gab-003",
+    "slug": "gabriela-torres",
+    "fullName": "Ignacio Salazar",
+    "attending": true,
+    "guestsCount": 1,
+    "phone": "+52 55 3456 7890",
+    "dietaryRestrictions": "",
+    "message": "Muchas felicidades prima en tus 15 años.",
+    "createdAt": "2026-08-22T09:15:00.000Z"
+  },
+  {
     "id": "rsvp-001",
     "slug": "valeria-15",
     "fullName": "Alejandro Mendoza & Familia",
