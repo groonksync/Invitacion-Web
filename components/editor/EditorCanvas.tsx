@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { EventData } from '@/types/event';
 import HeroSection from '@/components/HeroSection';
 import CountdownTimer from '@/components/CountdownTimer';
 import DedicationSection from '@/components/DedicationSection';
@@ -10,7 +11,6 @@ import DressCodeSection from '@/components/DressCodeSection';
 import GiftSection from '@/components/GiftSection';
 import RsvpSection from '@/components/RsvpSection';
 import FooterSection from '@/components/FooterSection';
-import { EventData } from '@/types/event';
 
 interface EditorCanvasProps {
   eventData: EventData;
@@ -25,192 +25,139 @@ export default function EditorCanvas({
   setActiveSection,
   deviceMode,
 }: EditorCanvasProps) {
-  // Ancho del contenedor según el dispositivo
+  // Ajuste de ancho según el dispositivo
   const getContainerWidth = () => {
     switch (deviceMode) {
       case 'mobile':
-        return 'w-[390px] min-w-[390px]';
+        return 'w-[390px] min-h-[844px] rounded-[48px] border-[10px] border-[#222222] shadow-2xl shadow-black ring-1 ring-white/10 my-8';
       case 'tablet':
-        return 'w-[768px] min-w-[768px]';
+        return 'w-[768px] min-h-[1024px] rounded-[36px] border-[12px] border-[#222222] shadow-2xl shadow-black ring-1 ring-white/10 my-8';
       case 'desktop':
-        return 'w-full max-w-5xl';
+        return 'w-full min-h-full rounded-none border-none shadow-none my-0';
+    }
+  };
+
+  const defaultOrder = ['hero', 'countdown', 'dedication', 'locations', 'itinerary', 'dressCode', 'giftRegistry', 'rsvp'];
+  const order = eventData.sectionOrder || defaultOrder;
+  const hidden = eventData.hiddenSections || [];
+  const layouts = eventData.sectionLayouts || {};
+
+  const renderSection = (secId: string) => {
+    if (hidden.includes(secId)) return null;
+
+    const isActive = activeSection === secId;
+    const highlightClass = isActive
+      ? 'ring-2 ring-rosegold ring-offset-4 ring-offset-[#131313] transition-all relative z-10'
+      : 'hover:outline hover:outline-1 hover:outline-rosegold/40 transition-all cursor-pointer';
+
+    switch (secId) {
+      case 'hero':
+        return (
+          <div key="hero" onClick={() => setActiveSection('hero')} className={highlightClass}>
+            <HeroSection
+              name={eventData.name}
+              subtitle={eventData.subtitle}
+              date={eventData.date}
+              heroImage={eventData.heroImage}
+            />
+          </div>
+        );
+
+      case 'countdown':
+        return (
+          <div key="countdown" onClick={() => setActiveSection('countdown')} className={highlightClass}>
+            <CountdownTimer
+              targetDate={eventData.date}
+              phrase={eventData.phrase}
+              phraseAuthor={eventData.phraseAuthor}
+              backgroundImage={eventData.gallery[0]?.url || '/fotos/gabriela-torres/dsc09665.jpg'}
+              secondaryImage={eventData.gallery[1]?.url || '/fotos/gabriela-torres/dsc09668.jpg'}
+              layout={layouts.countdown || 'fullscreen'}
+            />
+          </div>
+        );
+
+      case 'dedication':
+        return (
+          <div key="dedication" onClick={() => setActiveSection('dedication')} className={highlightClass}>
+            <DedicationSection
+              parents={eventData.parents}
+              backgroundImage={eventData.gallery[1]?.url || '/fotos/gabriela-torres/dsc09668.jpg'}
+              secondaryImage={eventData.gallery[2]?.url || '/fotos/gabriela-torres/dsc09709.jpg'}
+              layout={layouts.dedication || 'fullscreen'}
+            />
+          </div>
+        );
+
+      case 'locations':
+        return (
+          <div key="locations" onClick={() => setActiveSection('locations')} className={highlightClass}>
+            <LocationsSection
+              ceremony={eventData.ceremony}
+              party={eventData.party}
+              backgroundImage={eventData.gallery[2]?.url || '/fotos/gabriela-torres/dsc09709.jpg'}
+            />
+          </div>
+        );
+
+      case 'itinerary':
+        return (
+          <div key="itinerary" onClick={() => setActiveSection('itinerary')} className={highlightClass}>
+            <ItinerarySection
+              itinerary={eventData.itinerary}
+              backgroundImage={eventData.gallery[3]?.url || '/fotos/gabriela-torres/dsc09721.jpg'}
+            />
+          </div>
+        );
+
+      case 'dressCode':
+        return (
+          <div key="dressCode" onClick={() => setActiveSection('dressCode')} className={highlightClass}>
+            <DressCodeSection dressCode={eventData.dressCode} />
+          </div>
+        );
+
+      case 'giftRegistry':
+        return (
+          <div key="giftRegistry" onClick={() => setActiveSection('giftRegistry')} className={highlightClass}>
+            <GiftSection giftRegistry={eventData.giftRegistry} />
+          </div>
+        );
+
+      case 'rsvp':
+        return (
+          <div key="rsvp" onClick={() => setActiveSection('rsvp')} className={highlightClass}>
+            <RsvpSection
+              slug={eventData.slug}
+              name={eventData.name}
+              rsvpDeadline={eventData.rsvpDeadline}
+            />
+          </div>
+        );
+
+      default:
+        return null;
     }
   };
 
   return (
-    <main className="flex-1 bg-[#0f0f0f] overflow-y-auto p-4 sm:p-8 flex justify-center items-start">
+    <main className="flex-1 bg-[#0d0d0d] overflow-y-auto flex items-center justify-center p-0 sm:p-6 relative select-text">
       {/* Marco del Dispositivo */}
-      <div
-        className={`${getContainerWidth()} bg-[#131313] transition-all duration-300 rounded-[36px] overflow-hidden border-4 border-[#262626] shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative flex flex-col`}
-      >
-        {/* Notch / Barra Superior del Móvil */}
+      <div className={`bg-[#131313] overflow-hidden transition-all duration-300 ${getContainerWidth()}`}>
+        {/* Notificación Superior del Celular si es Móvil */}
         {deviceMode === 'mobile' && (
-          <div className="h-6 bg-[#131313] w-full flex items-center justify-center relative z-40">
-            <div className="w-28 h-4 bg-black rounded-b-xl" />
+          <div className="h-6 w-full bg-[#181818] flex items-center justify-between px-6 text-[10px] text-gray-400 font-mono select-none sticky top-0 z-40">
+            <span>9:41</span>
+            <div className="w-20 h-4 bg-black rounded-full mx-auto" />
+            <span>5G 100%</span>
           </div>
         )}
 
-        {/* 1. SECCIÓN PORTADA (HERO) */}
-        <div
-          onClick={() => setActiveSection('hero')}
-          className={`relative cursor-pointer transition-all ${
-            activeSection === 'hero'
-              ? 'ring-2 ring-rosegold ring-inset'
-              : 'hover:outline hover:outline-1 hover:outline-rosegold/40'
-          }`}
-        >
-          {activeSection === 'hero' && (
-            <div className="absolute top-2 left-4 z-40 px-2 py-0.5 rounded bg-rosegold text-[#131313] text-[9px] font-bold uppercase tracking-wider shadow">
-              Capa Activa: Portada
-            </div>
-          )}
-          <HeroSection
-            name={eventData.name}
-            subtitle={eventData.subtitle}
-            date={eventData.date}
-            heroImage={eventData.heroImage}
-          />
+        {/* Renderizado de Secciones Ordenadas Dinámicamente */}
+        <div className="flex flex-col">
+          {order.map((secId) => renderSection(secId))}
+          <FooterSection name={eventData.name} slug={eventData.slug} />
         </div>
-
-        {/* 2. SECCIÓN CUENTA REGRESIVA & FRASE */}
-        <div
-          onClick={() => setActiveSection('countdown')}
-          className={`relative cursor-pointer transition-all ${
-            activeSection === 'countdown'
-              ? 'ring-2 ring-rosegold ring-inset'
-              : 'hover:outline hover:outline-1 hover:outline-rosegold/40'
-          }`}
-        >
-          {activeSection === 'countdown' && (
-            <div className="absolute top-2 left-4 z-40 px-2 py-0.5 rounded bg-rosegold text-[#131313] text-[9px] font-bold uppercase tracking-wider shadow">
-              Capa Activa: Cuenta Regresiva & Frase
-            </div>
-          )}
-          <CountdownTimer
-            targetDate={eventData.date}
-            phrase={eventData.phrase}
-            phraseAuthor={eventData.phraseAuthor}
-            backgroundImage={eventData.gallery[0]?.url || '/fotos/gabriela-torres/dsc09665.jpg'}
-          />
-        </div>
-
-        {/* 3. SECCIÓN DEDICATORIA (PADRES) */}
-        <div
-          onClick={() => setActiveSection('dedication')}
-          className={`relative cursor-pointer transition-all ${
-            activeSection === 'dedication'
-              ? 'ring-2 ring-rosegold ring-inset'
-              : 'hover:outline hover:outline-1 hover:outline-rosegold/40'
-          }`}
-        >
-          {activeSection === 'dedication' && (
-            <div className="absolute top-2 left-4 z-40 px-2 py-0.5 rounded bg-rosegold text-[#131313] text-[9px] font-bold uppercase tracking-wider shadow">
-              Capa Activa: Bendición de Padres
-            </div>
-          )}
-          <DedicationSection
-            parents={eventData.parents}
-            backgroundImage={eventData.gallery[1]?.url || '/fotos/gabriela-torres/dsc09668.jpg'}
-          />
-        </div>
-
-        {/* 4. SECCIÓN UBICACIONES (MISA & RECEPCIÓN) */}
-        <div
-          onClick={() => setActiveSection('locations')}
-          className={`relative cursor-pointer transition-all ${
-            activeSection === 'locations'
-              ? 'ring-2 ring-rosegold ring-inset'
-              : 'hover:outline hover:outline-1 hover:outline-rosegold/40'
-          }`}
-        >
-          {activeSection === 'locations' && (
-            <div className="absolute top-2 left-4 z-40 px-2 py-0.5 rounded bg-rosegold text-[#131313] text-[9px] font-bold uppercase tracking-wider shadow">
-              Capa Activa: Lugares de Celebración
-            </div>
-          )}
-          <LocationsSection
-            ceremony={eventData.ceremony}
-            party={eventData.party}
-            backgroundImage={eventData.gallery[2]?.url || '/fotos/gabriela-torres/dsc09709.jpg'}
-          />
-        </div>
-
-        {/* 5. SECCIÓN ITINERARIO */}
-        <div
-          onClick={() => setActiveSection('itinerary')}
-          className={`relative cursor-pointer transition-all ${
-            activeSection === 'itinerary'
-              ? 'ring-2 ring-rosegold ring-inset'
-              : 'hover:outline hover:outline-1 hover:outline-rosegold/40'
-          }`}
-        >
-          {activeSection === 'itinerary' && (
-            <div className="absolute top-2 left-4 z-40 px-2 py-0.5 rounded bg-rosegold text-[#131313] text-[9px] font-bold uppercase tracking-wider shadow">
-              Capa Activa: Itinerario
-            </div>
-          )}
-          <ItinerarySection
-            itinerary={eventData.itinerary}
-            backgroundImage={eventData.gallery[3]?.url || '/fotos/gabriela-torres/dsc09721.jpg'}
-          />
-        </div>
-
-        {/* 6. SECCIÓN DRESS CODE */}
-        <div
-          onClick={() => setActiveSection('dressCode')}
-          className={`relative cursor-pointer transition-all ${
-            activeSection === 'dressCode'
-              ? 'ring-2 ring-rosegold ring-inset'
-              : 'hover:outline hover:outline-1 hover:outline-rosegold/40'
-          }`}
-        >
-          {activeSection === 'dressCode' && (
-            <div className="absolute top-2 left-4 z-40 px-2 py-0.5 rounded bg-rosegold text-[#131313] text-[9px] font-bold uppercase tracking-wider shadow">
-              Capa Activa: Código de Vestimenta
-            </div>
-          )}
-          <DressCodeSection dressCode={eventData.dressCode} />
-        </div>
-
-        {/* 7. SECCIÓN MESA DE REGALOS */}
-        <div
-          onClick={() => setActiveSection('giftRegistry')}
-          className={`relative cursor-pointer transition-all ${
-            activeSection === 'giftRegistry'
-              ? 'ring-2 ring-rosegold ring-inset'
-              : 'hover:outline hover:outline-1 hover:outline-rosegold/40'
-          }`}
-        >
-          {activeSection === 'giftRegistry' && (
-            <div className="absolute top-2 left-4 z-40 px-2 py-0.5 rounded bg-rosegold text-[#131313] text-[9px] font-bold uppercase tracking-wider shadow">
-              Capa Activa: Mesa de Regalos
-            </div>
-          )}
-          <GiftSection giftRegistry={eventData.giftRegistry} />
-        </div>
-
-        {/* 8. SECCIÓN RSVP */}
-        <div
-          onClick={() => setActiveSection('rsvp')}
-          className={`relative cursor-pointer transition-all ${
-            activeSection === 'rsvp'
-              ? 'ring-2 ring-rosegold ring-inset'
-              : 'hover:outline hover:outline-1 hover:outline-rosegold/40'
-          }`}
-        >
-          {activeSection === 'rsvp' && (
-            <div className="absolute top-2 left-4 z-40 px-2 py-0.5 rounded bg-rosegold text-[#131313] text-[9px] font-bold uppercase tracking-wider shadow">
-              Capa Activa: Confirmación RSVP
-            </div>
-          )}
-          <RsvpSection
-            slug={eventData.slug}
-            name={eventData.name}
-            rsvpDeadline={eventData.rsvpDeadline}
-          />
-        </div>
-
-        <FooterSection name={eventData.name} slug={eventData.slug} />
       </div>
     </main>
   );

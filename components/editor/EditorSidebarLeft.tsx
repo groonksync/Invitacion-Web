@@ -15,11 +15,13 @@ import {
   Shirt,
   Gift,
   MailCheck,
-  Check,
   Zap,
+  Flame,
+  ArrowUp,
+  ArrowDown,
   Eye,
-  SlidersHorizontal,
-  Flame
+  EyeOff,
+  LayoutGrid
 } from 'lucide-react';
 import { EventData } from '@/types/event';
 
@@ -40,10 +42,10 @@ export default function EditorSidebarLeft({
   onSelectImageForSection,
   markUnsaved,
 }: EditorSidebarLeftProps) {
-  const [activeTab, setActiveTab] = useState<'layers' | 'texts' | 'fonts' | 'effects' | 'animations' | 'photos'>('layers');
+  const [activeTab, setActiveTab] = useState<'layers' | 'layout' | 'texts' | 'fonts' | 'effects' | 'animations' | 'photos'>('layers');
 
-  // Secciones disponibles
-  const sections = [
+  // Secciones por defecto
+  const defaultSections = [
     { id: 'hero', name: '01. Portada (Hero)', icon: Sparkles },
     { id: 'countdown', name: '02. Cuenta Regr. & Frase', icon: Clock },
     { id: 'dedication', name: '03. Bendición de Padres', icon: Heart },
@@ -53,6 +55,16 @@ export default function EditorSidebarLeft({
     { id: 'giftRegistry', name: '07. Mesa de Regalos', icon: Gift },
     { id: 'rsvp', name: '08. Confirmación RSVP', icon: MailCheck },
   ];
+
+  // Orden actual de secciones
+  const currentOrder = eventData.sectionOrder || defaultSections.map((s) => s.id);
+  const hiddenSections = eventData.hiddenSections || [];
+  const currentLayouts = eventData.sectionLayouts || {};
+
+  // Ordenar según sectionOrder
+  const orderedSections = currentOrder
+    .map((id) => defaultSections.find((s) => s.id === id))
+    .filter(Boolean) as typeof defaultSections;
 
   // 10 Familias Tipográficas Profesionales Gratuitas de Google Fonts
   const typographyList = [
@@ -70,12 +82,19 @@ export default function EditorSidebarLeft({
 
   // Paletas de Color de Ultra-Lujo
   const colorPalettes = [
-    { id: 'rose-gold', name: 'Oro Rosa / Rose Gold', hex: '#E2A4AD', gradient: 'from-[#F5D3D8] via-[#E2A4AD] to-[#C97D88]' },
-    { id: 'classic-gold', name: 'Oro Real / Royal Gold', hex: '#D4AF37', gradient: 'from-[#FBF3D5] via-[#D4AF37] to-[#AA7C11]' },
-    { id: 'silver-diamond', name: 'Plata Diamante', hex: '#E0E0E0', gradient: 'from-[#FFFFFF] via-[#D1D5DB] to-[#9CA3AF]' },
-    { id: 'emerald-luxury', name: 'Verde Esmeralda', hex: '#10B981', gradient: 'from-[#6EE7B7] via-[#10B981] to-[#047857]' },
-    { id: 'sapphire-night', name: 'Azul Zafiro', hex: '#60A5FA', gradient: 'from-[#93C5FD] via-[#3B82F6] to-[#1D4ED8]' },
-    { id: 'imperial-purple', name: 'Púrpura Imperial', hex: '#C084FC', gradient: 'from-[#E9D5FF] via-[#A855F7] to-[#7E22CE]' },
+    { id: 'rose-gold', name: 'Oro Rosa / Rose Gold', hex: '#E2A4AD' },
+    { id: 'classic-gold', name: 'Oro Real / Royal Gold', hex: '#D4AF37' },
+    { id: 'silver-diamond', name: 'Plata Diamante', hex: '#E0E0E0' },
+    { id: 'emerald-luxury', name: 'Verde Esmeralda', hex: '#10B981' },
+    { id: 'sapphire-night', name: 'Azul Zafiro', hex: '#60A5FA' },
+    { id: 'imperial-purple', name: 'Púrpura Imperial', hex: '#C084FC' },
+  ];
+
+  // Opciones de Maquetación / Layout por Sección
+  const layoutStyles = [
+    { id: 'fullscreen', name: '🖼️ Inmersivo Cinemático', desc: 'Foto a pantalla completa con viñeta perimetral suave y texto superpuesto' },
+    { id: 'album-duo', name: '📸 Álbum Dúo Editorial', desc: 'Composición de 2 fotografías complementarias con tarjeta central' },
+    { id: 'floating-glass', name: '💎 Tarjeta Flotante Fine-Art', desc: 'Tarjeta de cristal esmerilado flotante con fondo desenfocado' },
   ];
 
   // Animaciones Profesionales
@@ -84,7 +103,6 @@ export default function EditorSidebarLeft({
     { id: 'slide-up', name: 'Elevación Cinemática (Slide Up)', desc: 'Sube suavemente desde la penumbra' },
     { id: 'float', name: 'Levitación Flotante (Floating Glow)', desc: 'Movimiento continuo y etéreo' },
     { id: 'sparkle', name: 'Destello de Partículas (Sparkles)', desc: 'Brillo sutil de polvo de estrellas' },
-    { id: 'zoom-in', name: 'Aproximación Suave (Scale Zoom)', desc: 'Efecto de lente de cámara' },
   ];
 
   // Fotos disponibles
@@ -118,113 +136,216 @@ export default function EditorSidebarLeft({
     });
   };
 
+  // Reordenar capas hacia arriba o abajo
+  const moveSection = (idx: number, direction: 'up' | 'down') => {
+    markUnsaved();
+    const newOrder = [...currentOrder];
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= newOrder.length) return;
+
+    const temp = newOrder[idx];
+    newOrder[idx] = newOrder[targetIdx];
+    newOrder[targetIdx] = temp;
+
+    updateField('sectionOrder', newOrder);
+  };
+
+  // Alternar visibilidad de una sección
+  const toggleVisibility = (secId: string) => {
+    markUnsaved();
+    const isHidden = hiddenSections.includes(secId);
+    const updated = isHidden
+      ? hiddenSections.filter((id) => id !== secId)
+      : [...hiddenSections, secId];
+    updateField('hiddenSections', updated);
+  };
+
+  // Cambiar layout de la sección activa
+  const setSectionLayout = (layoutId: string) => {
+    markUnsaved();
+    updateField(`sectionLayouts.${activeSection}`, layoutId);
+  };
+
   return (
     <aside className="w-80 bg-[#181818] border-r border-white/10 flex flex-col z-20 shrink-0 select-none">
       {/* Selector de Pestañas Superior */}
       <div className="grid grid-cols-6 border-b border-white/10 p-1.5 gap-1 bg-[#141414]">
         <button
           onClick={() => setActiveTab('layers')}
-          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[10px] font-medium transition-all ${
+          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[9px] font-medium transition-all ${
             activeTab === 'layers' ? 'bg-white/15 text-white shadow' : 'text-gray-400 hover:text-white'
           }`}
-          title="Capas y Secciones"
+          title="Capas y Orden"
         >
-          <Layers className="w-4 h-4 mb-0.5" />
+          <Layers className="w-3.5 h-3.5 mb-0.5" />
           <span>Capas</span>
         </button>
 
         <button
+          onClick={() => setActiveTab('layout')}
+          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[9px] font-medium transition-all ${
+            activeTab === 'layout' ? 'bg-white/15 text-white shadow' : 'text-gray-400 hover:text-white'
+          }`}
+          title="Diseño / Layout de Capa"
+        >
+          <LayoutGrid className="w-3.5 h-3.5 mb-0.5" />
+          <span>Diseño</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('texts')}
-          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[10px] font-medium transition-all ${
+          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[9px] font-medium transition-all ${
             activeTab === 'texts' ? 'bg-white/15 text-white shadow' : 'text-gray-400 hover:text-white'
           }`}
           title="Editar Textos"
         >
-          <Type className="w-4 h-4 mb-0.5" />
+          <Type className="w-3.5 h-3.5 mb-0.5" />
           <span>Textos</span>
         </button>
 
         <button
           onClick={() => setActiveTab('fonts')}
-          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[10px] font-medium transition-all ${
+          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[9px] font-medium transition-all ${
             activeTab === 'fonts' ? 'bg-white/15 text-white shadow' : 'text-gray-400 hover:text-white'
           }`}
           title="Catálogo de Tipografías"
         >
-          <Sliders className="w-4 h-4 mb-0.5" />
+          <Sliders className="w-3.5 h-3.5 mb-0.5" />
           <span>Fuentes</span>
         </button>
 
         <button
           onClick={() => setActiveTab('effects')}
-          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[10px] font-medium transition-all ${
+          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[9px] font-medium transition-all ${
             activeTab === 'effects' ? 'bg-white/15 text-white shadow' : 'text-gray-400 hover:text-white'
           }`}
           title="Difuminados & Paletas"
         >
-          <Palette className="w-4 h-4 mb-0.5" />
+          <Palette className="w-3.5 h-3.5 mb-0.5" />
           <span>Efectos</span>
         </button>
 
         <button
-          onClick={() => setActiveTab('animations')}
-          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[10px] font-medium transition-all ${
-            activeTab === 'animations' ? 'bg-white/15 text-white shadow' : 'text-gray-400 hover:text-white'
-          }`}
-          title="Animaciones"
-        >
-          <Zap className="w-4 h-4 mb-0.5" />
-          <span>Motion</span>
-        </button>
-
-        <button
           onClick={() => setActiveTab('photos')}
-          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[10px] font-medium transition-all ${
+          className={`flex flex-col items-center justify-center py-2 rounded-lg text-[9px] font-medium transition-all ${
             activeTab === 'photos' ? 'bg-white/15 text-white shadow' : 'text-gray-400 hover:text-white'
           }`}
           title="Fotos de la Sesión"
         >
-          <ImageIcon className="w-4 h-4 mb-0.5" />
+          <ImageIcon className="w-3.5 h-3.5 mb-0.5" />
           <span>Fotos</span>
         </button>
       </div>
 
-      {/* Contenido Dinámico de la Pestaña Activa */}
+      {/* Contenido Dinámico */}
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        {/* =========================================================================
-            1. PESTAÑA CAPAS / SECCIONES
-        ========================================================================= */}
+        {/* 1. PESTAÑA CAPAS / REORDENAR / VISIBILIDAD */}
         {activeTab === 'layers' && (
           <div className="space-y-3">
-            <span className="text-[10px] uppercase font-mono tracking-wider text-gray-500 block px-1">
-              Estructura de la Invitación
-            </span>
+            <div className="flex items-center justify-between px-1">
+              <span className="text-[10px] uppercase font-mono tracking-wider text-gray-500">
+                Organización de Capas
+              </span>
+              <span className="text-[9px] text-rosegold font-light">Mover & Visibilidad</span>
+            </div>
 
             <div className="space-y-1.5">
-              {sections.map((sec) => {
+              {orderedSections.map((sec, idx) => {
                 const Icon = sec.icon;
                 const isActive = activeSection === sec.id;
+                const isHidden = hiddenSections.includes(sec.id);
+
+                return (
+                  <div
+                    key={sec.id}
+                    className={`w-full flex items-center justify-between p-2.5 rounded-xl border transition-all ${
+                      isActive
+                        ? 'bg-rosegold/20 border-rosegold text-white shadow-lg'
+                        : isHidden
+                        ? 'bg-black/30 border-white/5 opacity-50 text-gray-500'
+                        : 'bg-black/40 border-white/5 text-gray-300 hover:bg-white/5'
+                    }`}
+                  >
+                    {/* Botón para seleccionar y enfocar la capa */}
+                    <button
+                      onClick={() => setActiveSection(sec.id)}
+                      className="flex items-center gap-2.5 flex-1 text-left truncate"
+                    >
+                      <div className={`p-1.5 rounded-lg shrink-0 ${isActive ? 'bg-rosegold text-[#131313]' : 'bg-white/5 text-gray-400'}`}>
+                        <Icon className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="truncate">
+                        <span className="text-xs font-medium block truncate">{sec.name}</span>
+                        <span className="text-[9px] text-gray-500 capitalize">
+                          {currentLayouts[sec.id] || 'Inmersivo'}
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* Acciones de Capa: Subir, Bajar y Ocultar/Mostrar */}
+                    <div className="flex items-center gap-1 shrink-0 ml-2">
+                      <button
+                        onClick={() => moveSection(idx, 'up')}
+                        disabled={idx === 0}
+                        className="p-1 rounded text-gray-400 hover:text-white disabled:opacity-20 hover:bg-white/10"
+                        title="Subir posición"
+                      >
+                        <ArrowUp className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={() => moveSection(idx, 'down')}
+                        disabled={idx === orderedSections.length - 1}
+                        className="p-1 rounded text-gray-400 hover:text-white disabled:opacity-20 hover:bg-white/10"
+                        title="Bajar posición"
+                      >
+                        <ArrowDown className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={() => toggleVisibility(sec.id)}
+                        className={`p-1 rounded hover:bg-white/10 ${isHidden ? 'text-red-400' : 'text-gray-400 hover:text-white'}`}
+                        title={isHidden ? 'Mostrar sección' : 'Ocultar sección'}
+                      >
+                        {isHidden ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* 2. PESTAÑA DISEÑO / LAYOUT DE LA CAPA ACTIVA */}
+        {activeTab === 'layout' && (
+          <div className="space-y-4">
+            <div className="px-1">
+              <span className="text-[10px] uppercase font-mono tracking-wider text-rosegold block">
+                Estilo de Diseño para:
+              </span>
+              <strong className="text-sm text-white uppercase">{activeSection}</strong>
+            </div>
+
+            <div className="space-y-2.5">
+              {layoutStyles.map((ly) => {
+                const isSelected = (currentLayouts[activeSection] || 'fullscreen') === ly.id;
 
                 return (
                   <button
-                    key={sec.id}
-                    onClick={() => setActiveSection(sec.id)}
-                    className={`w-full flex items-center justify-between p-3 rounded-xl text-left transition-all ${
-                      isActive
-                        ? 'bg-rosegold/20 border border-rosegold text-white shadow-lg'
-                        : 'text-gray-300 hover:bg-white/5 border border-white/5'
+                    key={ly.id}
+                    onClick={() => setSectionLayout(ly.id)}
+                    className={`w-full p-3.5 rounded-xl text-left border transition-all space-y-1.5 ${
+                      isSelected
+                        ? 'bg-rosegold/20 border-rosegold text-white shadow-lg'
+                        : 'bg-black/40 border-white/10 hover:border-white/20 text-gray-300'
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`p-1.5 rounded-lg ${isActive ? 'bg-rosegold text-[#131313]' : 'bg-white/5 text-gray-400'}`}>
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <span className="text-xs font-medium block">{sec.name}</span>
-                        <span className="text-[10px] text-gray-500 font-light">Toca para enfocar</span>
-                      </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-white">{ly.name}</span>
+                      {isSelected && <span className="text-[9px] font-mono text-rosegold uppercase bg-rosegold/20 px-1.5 py-0.5 rounded">ACTIVO</span>}
                     </div>
-                    {isActive && <div className="w-2 h-2 rounded-full bg-rosegold animate-pulse" />}
+                    <p className="text-[11px] text-gray-400 font-light leading-relaxed">
+                      {ly.desc}
+                    </p>
                   </button>
                 );
               })}
@@ -232,9 +353,7 @@ export default function EditorSidebarLeft({
           </div>
         )}
 
-        {/* =========================================================================
-            2. PESTAÑA TEXTOS & CONTENIDOS
-        ========================================================================= */}
+        {/* 3. PESTAÑA TEXTOS */}
         {activeTab === 'texts' && (
           <div className="space-y-4">
             <span className="text-[10px] uppercase font-mono tracking-wider text-rosegold block px-1">
@@ -305,9 +424,7 @@ export default function EditorSidebarLeft({
           </div>
         )}
 
-        {/* =========================================================================
-            3. PESTAÑA TIPOGRAFÍAS GOOGLE FONTS
-        ========================================================================= */}
+        {/* 4. PESTAÑA TIPOGRAFÍAS */}
         {activeTab === 'fonts' && (
           <div className="space-y-4">
             <span className="text-[10px] uppercase font-mono tracking-wider text-rosegold block px-1">
@@ -330,7 +447,7 @@ export default function EditorSidebarLeft({
                     </span>
                   </div>
                   <span className={`text-xs text-gray-400 block pt-1 ${font.fontClass}`}>
-                    Mis Quince Años — Gabriela Torres
+                    Mis Quince Años — {eventData.name}
                   </span>
                 </button>
               ))}
@@ -338,12 +455,9 @@ export default function EditorSidebarLeft({
           </div>
         )}
 
-        {/* =========================================================================
-            4. PESTAÑA EFECTOS, DIFUMINADOS & BORDES A NEGRO
-        ========================================================================= */}
+        {/* 5. PESTAÑA EFECTOS */}
         {activeTab === 'effects' && (
           <div className="space-y-6">
-            {/* Control de Desvanecimiento Perimetral */}
             <div className="p-4 rounded-2xl bg-black/50 border border-rosegold/30 space-y-3">
               <div className="flex items-center gap-2 text-rosegold">
                 <Flame className="w-4 h-4 text-rosegold" />
@@ -352,7 +466,7 @@ export default function EditorSidebarLeft({
                 </span>
               </div>
               <p className="text-[11px] text-gray-300 font-light leading-relaxed">
-                Elimina los bordes duros y recuadros rectos de las fotos para fundirlas con el fondo <strong>#131313</strong>.
+                Elimina los bordes duros de las fotos para fundirlas suavemente con el fondo <strong>#131313</strong>.
               </p>
               <div className="pt-2 flex items-center justify-between">
                 <span className="text-xs text-white font-medium">Bordes Difuminados en 4 Lados</span>
@@ -362,12 +476,10 @@ export default function EditorSidebarLeft({
               </div>
             </div>
 
-            {/* Selector de Paleta de Colores */}
             <div className="space-y-3">
               <span className="text-[10px] uppercase font-mono tracking-wider text-gray-400 block px-1">
-                Gama de Acento de la Invitación
+                Gama de Acento
               </span>
-
               <div className="grid grid-cols-2 gap-2">
                 {colorPalettes.map((pal) => (
                   <button
@@ -375,7 +487,7 @@ export default function EditorSidebarLeft({
                     onClick={() => updateField('theme.palette', pal.id)}
                     className="p-2.5 rounded-xl bg-black/40 border border-white/10 hover:border-rosegold text-left transition-all space-y-1.5"
                   >
-                    <div className="w-full h-4 rounded-lg bg-gradient-to-r shadow-inner" style={{ backgroundColor: pal.hex }} />
+                    <div className="w-full h-4 rounded-lg shadow-inner" style={{ backgroundColor: pal.hex }} />
                     <span className="text-[11px] text-gray-200 font-medium block truncate">
                       {pal.name}
                     </span>
@@ -386,38 +498,7 @@ export default function EditorSidebarLeft({
           </div>
         )}
 
-        {/* =========================================================================
-            5. PESTAÑA ANIMACIONES PROFESIONALES
-        ========================================================================= */}
-        {activeTab === 'animations' && (
-          <div className="space-y-4">
-            <span className="text-[10px] uppercase font-mono tracking-wider text-rosegold block px-1">
-              Efectos de Animación & Movimiento
-            </span>
-
-            <div className="space-y-2.5">
-              {animationList.map((anim) => (
-                <button
-                  key={anim.id}
-                  onClick={() => updateField('theme.animation', anim.id)}
-                  className="w-full p-3 rounded-xl bg-black/40 hover:bg-black/80 border border-white/10 hover:border-rosegold text-left transition-all space-y-1"
-                >
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-3.5 h-3.5 text-rosegold" />
-                    <span className="text-xs font-semibold text-white">{anim.name}</span>
-                  </div>
-                  <p className="text-[11px] text-gray-400 font-light leading-relaxed pl-5">
-                    {anim.desc}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* =========================================================================
-            6. PESTAÑA BIBLIOTECA DE FOTOS
-        ========================================================================= */}
+        {/* 6. PESTAÑA FOTOS */}
         {activeTab === 'photos' && (
           <div className="space-y-3">
             <div className="px-1">

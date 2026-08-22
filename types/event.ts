@@ -42,7 +42,7 @@ export interface EventData {
     time: string;
     title: string;
     description: string;
-    icon: 'church' | 'cheers' | 'music' | 'cake' | 'utensils' | 'camera' | 'sparkles' | 'moon';
+    icon: string;
   }>;
   dressCode: {
     style: string;
@@ -62,7 +62,12 @@ export interface EventData {
   };
   rsvpDeadline: string;
   adminPin: string;
-  theme: {
-    palette: 'rose-gold' | 'champagne' | 'midnight-gold' | 'emerald' | 'lavender';
+  theme?: {
+    palette?: string;
+    fontFamily?: string;
+    animation?: string;
   };
+  sectionLayouts?: Record<string, 'fullscreen' | 'album-duo' | 'floating-glass' | 'spotlight' | 'mosaic'>;
+  sectionOrder?: string[];
+  hiddenSections?: string[];
 }
