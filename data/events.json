@@ -1,0 +1,119 @@
+{
+  "gabriela-torres": {
+    "id": "evt-gabriela",
+    "slug": "gabriela-torres",
+    "name": "Gabriela Torres",
+    "age": 15,
+    "subtitle": "Mis Quince Años",
+    "date": "2026-11-20T19:00:00",
+    "heroImage": "/fotos/gabriela-torres/inicio.jpg",
+    "musicUrl": "/musica/15.mp3",
+    "musicTitle": "Canción Especial de Gabriela",
+    "phrase": "Hay momentos en la vida que son irrepetibles, pero compartirlos con las personas que más amo los hace inolvidables. Gracias por ser parte de mi noche mágica.",
+    "phraseAuthor": "Gabriela Torres",
+    "parents": {
+      "mother": "Patricia Méndez de Torres",
+      "father": "Fernando Torres Salazar",
+      "godparents": "Sofía Morales & Carlos Méndez"
+    },
+    "ceremony": {
+      "title": "Misa de Acción de Gracias",
+      "time": "18:00",
+      "locationName": "Parroquia San Juan Bautista",
+      "address": "Av. Las Palmas 840, Zona Central",
+      "mapsUrl": "https://maps.google.com/?q=Parroquia+San+Juan+Bautista",
+      "wazeUrl": "https://waze.com/ul?q=Parroquia+San+Juan+Bautista",
+      "image": "/fotos/gabriela-torres/dsc09701.jpg"
+    },
+    "party": {
+      "title": "Recepción & Gran Fiesta de Gala",
+      "time": "20:30",
+      "locationName": "Salón de Eventos Las Magnolias",
+      "address": "Boulevard Principal Km 4.2, Jardines del Valle",
+      "mapsUrl": "https://maps.google.com/?q=Salon+de+Eventos+Las+Magnolias",
+      "wazeUrl": "https://waze.com/ul?q=Salon+de+Eventos+Las+Magnolias",
+      "image": "/fotos/gabriela-torres/dsc09735.jpg"
+    },
+    "gallery": [
+      {
+        "url": "/fotos/gabriela-torres/dsc09665.jpg",
+        "alt": "Sesión Fotográfica Gabriela Torres",
+        "caption": "Sesión de ensueño"
+      },
+      {
+        "url": "/fotos/gabriela-torres/dsc09668.jpg",
+        "alt": "Sonrisas y momentos mágicos",
+        "caption": "Esperando mis 15 años"
+      },
+      {
+        "url": "/fotos/gabriela-torres/dsc09709.jpg",
+        "alt": "Elegancia de Gabriela",
+        "caption": "Elegancia y juventud"
+      },
+      {
+        "url": "/fotos/gabriela-torres/dsc09721.jpg",
+        "alt": "Sesión de gala",
+        "caption": "Un sueño hecho realidad"
+      }
+    ],
+    "itinerary": [
+      {
+        "time": "18:00",
+        "title": "Misa de Acción de Gracias",
+        "description": "Bendición y gratitud con familiares y amigos.",
+        "icon": "church"
+      },
+      {
+        "time": "20:30",
+        "title": "Recepción & Cocktail",
+        "description": "Bienvenida a todos los invitados.",
+        "icon": "cheers"
+      },
+      {
+        "time": "21:30",
+        "title": "Entrada Triunfal & Vals",
+        "description": "El esperado vals con los padres y chambelanes.",
+        "icon": "music"
+      },
+      {
+        "time": "22:15",
+        "title": "Brindis & Cena de Gala",
+        "description": "Menú especial de 3 tiempos para los invitados.",
+        "icon": "utensils"
+      },
+      {
+        "time": "23:30",
+        "title": "Apertura de Pista & Fiesta",
+        "description": "¡Música en vivo, DJ y celebración!",
+        "icon": "sparkles"
+      },
+      {
+        "time": "01:30",
+        "title": "Hora Loca & Sorpresas",
+        "description": "Luces, cotillón y mucha diversión.",
+        "icon": "moon"
+      }
+    ],
+    "dressCode": {
+      "style": "Rigurosa Etiqueta / Formal Elegante",
+      "description": "Hombres: Traje formal o esmoquin. Mujeres: Vestido largo de noche.",
+      "colorNotes": "Agradecemos reservar los tonos del vestido para la quinceañera.",
+      "colors": ["#2A2A2A", "#1E3A8A", "#065F46", "#831843", "#4C1D95"]
+    },
+    "giftRegistry": {
+      "title": "Lluvia de Sobres / Transferencia Bancaria",
+      "description": "Tu presencia es mi mayor regalo, pero si deseas hacerme un presente especial para mis futuros proyectos, pongo a tu disposición:",
+      "bankName": "Banco Nacional",
+      "accountHolder": "Gabriela Torres Méndez",
+      "accountNumber": "4152-7890-1234-5678",
+      "clabeOrCbu": "012180004152789012",
+      "alias": "GABRIELA.15.TORRES",
+      "wishListUrl": "https://amazon.com"
+    },
+    "rsvpDeadline": "10 de Noviembre de 2026",
+    "adminPin": "2026",
+    "theme": {
+      "palette": "rose-gold"
+    }
+  }
+}

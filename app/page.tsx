@@ -14,7 +14,8 @@ import {
   Lock,
   Link as LinkIcon,
   Smartphone,
-  Send
+  Send,
+  Palette
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -54,16 +55,17 @@ export default function HomePage() {
           </h1>
 
           <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
-            Administra tus invitaciones interactivas, copia los enlaces directos para los invitados y entrega a cada familia su panel privado de control de asistencia con PIN.
+            Administra tus invitaciones interactivas, personalízalas en tiempo real con el nuevo <strong>Studio XV Editor</strong>, copia los enlaces para los invitados y entrega a cada familia su panel privado con PIN.
           </p>
         </div>
 
         {/* Sección de Tarjetas con las Invitaciones y Enlaces de Copiado */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {events.map((event) => {
-            const isDemo = event.slug === 'valeria-15';
+            const isDemo = event.slug === 'gabriela-torres';
             const invitationUrl = origin ? `${origin}/${event.slug}` : `/${event.slug}`;
             const adminUrl = origin ? `${origin}/${event.slug}/admin` : `/${event.slug}/admin`;
+            const editorUrl = origin ? `${origin}/${event.slug}/editor` : `/${event.slug}/editor`;
 
             return (
               <div
@@ -73,7 +75,7 @@ export default function HomePage() {
                 }`}
               >
                 {/* Portada Miniatura */}
-                <div className="relative h-60 w-full overflow-hidden bg-black">
+                <div className="relative h-64 w-full overflow-hidden bg-black">
                   <img
                     src={event.heroImage}
                     alt={event.name}
@@ -82,23 +84,35 @@ export default function HomePage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#16121a] via-transparent to-black/40" />
 
                   {/* Badge */}
-                  <div className="absolute top-4 left-4">
+                  <div className="absolute top-4 left-4 flex gap-2">
                     {isDemo ? (
-                      <span className="px-3 py-1.5 rounded-full bg-gradient-to-r from-rose-600 to-amber-600 text-white text-xs font-semibold uppercase tracking-wider shadow-lg">
-                        Demo Completa
+                      <span className="px-3 py-1 rounded-full bg-gradient-to-r from-rose-600 to-amber-600 text-white text-[11px] font-semibold uppercase tracking-wider shadow-lg">
+                        Activa & Publicada
                       </span>
                     ) : (
-                      <span className="px-3 py-1.5 rounded-full bg-zinc-800/90 border border-zinc-600 text-zinc-300 text-xs font-semibold uppercase tracking-wider">
-                        Plantilla en Blanco
+                      <span className="px-3 py-1 rounded-full bg-zinc-800/90 border border-zinc-600 text-zinc-300 text-[11px] font-semibold uppercase tracking-wider">
+                        Plantilla
                       </span>
                     )}
+                  </div>
+
+                  {/* Botón Flotante a Editor Studio */}
+                  <div className="absolute top-4 right-4">
+                    <Link
+                      href={`/${event.slug}/editor`}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 hover:bg-[#E2A4AD] hover:text-[#131313] text-rosegold-light border border-rosegold/40 text-xs font-semibold uppercase tracking-wider transition-all backdrop-blur-md shadow-lg"
+                      title="Personalizar en Studio XV Editor"
+                    >
+                      <Palette className="w-3.5 h-3.5" />
+                      <span>Studio Editor</span>
+                    </Link>
                   </div>
 
                   <div className="absolute bottom-4 left-4 right-4">
                     <span className="text-xs uppercase tracking-widest text-amber-300 font-sans block">
                       {event.subtitle}
                     </span>
-                    <h2 className="font-cursive text-4xl text-white drop-shadow-md">
+                    <h2 className="font-serif text-3xl sm:text-4xl text-white drop-shadow-md">
                       {event.name}
                     </h2>
                   </div>
@@ -178,71 +192,36 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Botones de Acción (Ver en directo) */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-white/10">
+                  {/* Botones de Acción (Abrir Editor / Ver en Directo) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3 border-t border-white/10">
+                    <Link
+                      href={`/${event.slug}/editor`}
+                      className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:opacity-95 text-white text-xs font-medium text-center shadow-lg transition-all"
+                    >
+                      <Palette className="w-3.5 h-3.5" />
+                      <span>Studio Editor</span>
+                    </Link>
+
                     <Link
                       href={`/${event.slug}`}
-                      className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:opacity-95 text-white text-sm font-medium text-center shadow-lg transition-all"
+                      className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-medium text-center transition-all"
                     >
-                      <Eye className="w-4 h-4" />
-                      <span>Abrir Invitación Web</span>
+                      <Eye className="w-3.5 h-3.5 text-rosegold" />
+                      <span>Ver Invitación</span>
                     </Link>
 
                     <Link
                       href={`/${event.slug}/admin`}
-                      className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-black/60 hover:bg-rose-950/80 border border-rose-400/30 text-rose-200 hover:text-white text-sm font-medium text-center transition-all"
+                      className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-black/60 hover:bg-rose-950/80 border border-rose-400/30 text-rose-200 hover:text-white text-xs font-medium text-center transition-all"
                     >
-                      <ShieldCheck className="w-4 h-4 text-amber-400" />
-                      <span>Abrir Panel de Asistencia</span>
+                      <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Panel Mamá</span>
                     </Link>
                   </div>
                 </div>
               </div>
             );
           })}
-        </div>
-
-        {/* Sección Informativa: Explicación de los Enlaces */}
-        <div className="glass-card-gold rounded-3xl p-8 sm:p-12 space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-xs uppercase tracking-widest text-amber-300 font-sans block">
-              Guía Rápida para Compartir
-            </span>
-            <h2 className="font-serif text-2xl sm:text-3xl text-white font-medium">
-              ¿Qué enlace le entregas a cada persona?
-            </h2>
-            <p className="text-sm text-gray-300">
-              Cada cliente y cada grupo de personas tiene su enlace correspondiente para mantener la total privacidad.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-            <div className="p-6 rounded-2xl bg-black/50 border border-rose-400/30 space-y-3">
-              <div className="flex items-center gap-2 text-rose-300 font-medium">
-                <Smartphone className="w-5 h-5" />
-                <h3 className="font-serif text-lg text-white">1. Enlace para los Invitados</h3>
-              </div>
-              <p className="text-gray-300 text-xs leading-relaxed">
-                Este es el enlace que la quinceañera y sus padres comparten a sus familiares y amigos por WhatsApp o redes sociales. Los invitados verán la música, la galería de fotos, el mapa y el formulario para confirmar su asistencia.
-              </p>
-              <div className="p-2.5 rounded-xl bg-rose-950/40 border border-rose-400/20 text-rose-200 text-xs font-mono">
-                👉 tudominio.vercel.app/valeria-15
-              </div>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-black/50 border border-amber-400/30 space-y-3">
-              <div className="flex items-center gap-2 text-amber-300 font-medium">
-                <Lock className="w-5 h-5" />
-                <h3 className="font-serif text-lg text-white">2. Enlace Privado para los Padres</h3>
-              </div>
-              <p className="text-gray-300 text-xs leading-relaxed">
-                Este enlace es exclusivo para la mamá o los padres. Al ingresar con su PIN, pueden ver la lista de cuántas personas confirmaron en vivo, sus dedicatorias y presionar el botón de **Descargar en Excel**.
-              </p>
-              <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-400/20 text-amber-200 text-xs font-mono">
-                👉 tudominio.vercel.app/valeria-15/admin (PIN: 1515)
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </main>
