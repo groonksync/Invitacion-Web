@@ -15,7 +15,7 @@ interface DedicationSectionProps {
 
 export default function DedicationSection({ phrase, phraseAuthor, parents }: DedicationSectionProps) {
   return (
-    <section className="py-24 sm:py-36 px-6 max-w-4xl mx-auto text-center space-y-16 sm:space-y-24">
+    <section className="py-28 sm:py-36 px-6 max-w-4xl mx-auto text-center space-y-16 sm:space-y-24">
       {/* Transición de Texto: Un Momento Inolvidable */}
       <motion.div
         initial={{ opacity: 0, y: 25 }}
@@ -39,24 +39,45 @@ export default function DedicationSection({ phrase, phraseAuthor, parents }: Ded
         <div className="w-12 h-[1px] bg-rosegold/30 mx-auto" />
       </motion.div>
 
-      {/* Retrato Inmersivo Desvanecido en el Fondo Oscuro (Sin cuadros, 100% fundido) */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.4 }}
-        className="relative w-[92%] sm:w-[85%] max-w-2xl mx-auto aspect-[3/4] sm:aspect-[4/5] overflow-hidden flex items-center justify-center my-8"
-      >
-        <img
-          src="/fotos/gabriela-torres/dsc09709.jpg"
-          alt="Quinceañera"
-          className="w-full h-full object-cover feather-mask-portrait scale-105"
-          loading="lazy"
-        />
-        {/* Capas perimetrales para fusión perfecta en todos los bordes */}
-        <div className="absolute inset-0 feather-overlay-all pointer-events-none" />
-        <div className="absolute inset-0 feather-overlay-vertical pointer-events-none" />
-      </motion.div>
+      {/* COMPOSICIÓN DISEÑO 4: Atmósfera de Fondo + Retrato Spotlight */}
+      <div className="relative w-full max-w-3xl mx-auto py-10 sm:py-16">
+        {/* Imagen de Fondo 1 (Atmósfera amplia en penumbra, vestido completo) */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.4 }}
+          className="relative w-[95%] sm:w-[85%] mx-auto aspect-[4/5] sm:aspect-[16/10] overflow-hidden flex items-center justify-center opacity-70"
+        >
+          <img
+            src="/fotos/gabriela-torres/dsc09721.jpg"
+            alt="Atmósfera de la sesión"
+            className="w-full h-full object-cover feather-mask-deep filter brightness-90"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 feather-overlay-all pointer-events-none" />
+          <div className="absolute inset-0 feather-overlay-vertical pointer-events-none" />
+        </motion.div>
+
+        {/* Imagen de Primer Plano 2 (Retrato Spotlight en foco, superpuesto en el centro) */}
+        <motion.div
+          initial={{ opacity: 0, y: 35, scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.3, delay: 0.3 }}
+          className="relative -mt-36 sm:-mt-52 md:-mt-64 z-10 w-[80%] sm:w-[65%] md:w-[58%] mx-auto aspect-[4/5] overflow-hidden flex items-center justify-center"
+        >
+          <img
+            src="/fotos/gabriela-torres/dsc09709.jpg"
+            alt="Retrato Spotlight"
+            className="w-full h-full object-cover feather-mask-deep drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
+            loading="lazy"
+          />
+          {/* Fusión suave en forma de niebla de luz hacia el fondo #131313 */}
+          <div className="absolute inset-0 feather-overlay-all pointer-events-none" />
+          <div className="absolute inset-0 feather-overlay-vertical pointer-events-none" />
+        </motion.div>
+      </div>
 
       {/* Mención a los Padres con Mucho Aire */}
       <motion.div
